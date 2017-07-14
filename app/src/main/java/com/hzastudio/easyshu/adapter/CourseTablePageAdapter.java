@@ -8,7 +8,6 @@ import java.util.List;
 
 public class CourseTablePageAdapter extends FragmentPagerAdapter {
 
-    private static final int FragmentCount=5;
     private List<Fragment> mFragments;
 
     public CourseTablePageAdapter(FragmentManager fm , List<Fragment> mFragments) {
