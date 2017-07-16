@@ -9,10 +9,12 @@ import java.util.List;
 public class CourseTablePageAdapter extends FragmentPagerAdapter {
 
     private List<Fragment> mFragments;
+    private List<String> mTitles;
 
-    public CourseTablePageAdapter(FragmentManager fm , List<Fragment> mFragments) {
+    public CourseTablePageAdapter(FragmentManager fm , List<Fragment> mFragments,List<String> mTitles) {
         super(fm);
         this.mFragments=mFragments;
+        this.mTitles=mTitles;
     }
 
     @Override
@@ -25,4 +27,8 @@ public class CourseTablePageAdapter extends FragmentPagerAdapter {
         return mFragments.size();
     }
 
+    @Override
+    public CharSequence getPageTitle(int position) {
+        return mTitles.get(position);
+    }
 }
