@@ -1,11 +1,14 @@
 package com.hzastudio.easyshu.activity;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Base64;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,11 +17,21 @@ import com.hzastudio.easyshu.R;
 import com.hzastudio.easyshu.adapter.CourseTablePageAdapter;
 import com.hzastudio.easyshu.fragment.CourseTableDayFragment;
 import com.hzastudio.easyshu.support.universal.BaseActivity;
+import com.hzastudio.easyshu.support.universal.MainApplication;
+import com.hzastudio.easyshu.task.Task_AcquirePublicKey;
 import com.hzastudio.easyshu.task.Task_CheckIfUserExist;
+import com.hzastudio.easyshu.task.Task_CreateNewUser;
+import com.hzastudio.easyshu.task.Task_DeleteUserInfo;
 import com.hzastudio.easyshu.ui.widget.ViewPagerSwipeRefreshLayout;
 
+import java.security.KeyFactory;
+import java.security.MessageDigest;
+import java.security.PublicKey;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.crypto.Cipher;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -29,6 +42,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.internal.schedulers.NewThreadScheduler;
+import okhttp3.Response;
 
 public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener,
                                                           View.OnClickListener{
@@ -97,16 +111,42 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         Observable<String> observable=Observable.create(new ObservableOnSubscribe<String>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<String> e) throws Exception {
-                Boolean res=new Task_CheckIfUserExist().execute().get();
-                if(res)
-                {
-                    e.onNext("USER OK!");
+                String psw="Phantom888";
+
+        /* md5 */
+                MessageDigest md5=MessageDigest.getInstance("MD5");
+                md5.update(psw.getBytes());
+                byte[] m=md5.digest();
+                StringBuilder ret=new StringBuilder(m.length<<1);
+                for (byte aM : m) {
+                    ret.append(Character.forDigit((aM >> 4) & 0xf, 16));
+                    ret.append(Character.forDigit(aM & 0xf, 16));
+                }
+                String md5psw=Base64.encodeToString(ret.toString().getBytes(),Base64.DEFAULT);
+
+        /* publicKey Encrypt */
+                if(new Task_AcquirePublicKey().execute("16121683").get()) {
+                    SharedPreferences sp = MainApplication.getContext().getSharedPreferences("data",
+                            Context.MODE_PRIVATE);
+                    String publicKey = sp.getString("publicKey", null);
+                    Log.d("sss","PublicKey:"+publicKey);
+                    byte[] decoded = Base64.decode(publicKey, Base64.DEFAULT);
+                    X509EncodedKeySpec spec = new X509EncodedKeySpec(decoded);
+                    KeyFactory factory = KeyFactory.getInstance("RSA");
+                    PublicKey key = factory.generatePublic(spec);
+                    Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+                    cipher.init(Cipher.ENCRYPT_MODE, key);
+                    byte[] encrypted = cipher.doFinal(psw.getBytes());
+                    String result = Base64.encodeToString(encrypted, Base64.DEFAULT);
+                    Log.d("sss","Encoded Password:"+result);
+                    Boolean res = new Task_CreateNewUser().execute("16121683", result, md5psw).get();
+                    Log.d("sss", "Result:" + res);
+                    e.onComplete();
                 }
                 else
                 {
-                    e.onNext("ERR!");
+                    e.onError(new Throwable("23333"));
                 }
-                e.onComplete();
             }
         });
         Observer<String> observer=new Observer<String>() {
@@ -131,8 +171,8 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
             }
         };
         observable.subscribeOn(new NewThreadScheduler())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(observer);
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
 
     }
 
