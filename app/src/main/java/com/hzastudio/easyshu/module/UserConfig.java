@@ -5,14 +5,20 @@ import android.content.SharedPreferences;
 import android.util.Base64;
 import android.util.Log;
 
+import com.hzastudio.easyshu.support.program_const.URL;
 import com.hzastudio.easyshu.support.tool.SecurityTool;
 import com.hzastudio.easyshu.support.universal.MainApplication;
 import com.hzastudio.easyshu.task.UserTasks;
+
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.annotations.NonNull;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 import static com.hzastudio.easyshu.support.tool.SecurityTool.MD5;
 import static com.hzastudio.easyshu.support.tool.SecurityTool.RSA_EncryptedWithPublicKey;
@@ -20,6 +26,34 @@ import static com.hzastudio.easyshu.support.tool.SecurityTool.RSA_EncryptedWithP
 public class UserConfig {
 
     //TODO:尚未DEBUG，使用时需关注问题
+
+    public static Observable<Boolean> CheckServer()
+    {
+        return Observable.create(new ObservableOnSubscribe<Boolean>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<Boolean> e) throws Exception {
+                OkHttpClient client=new OkHttpClient.Builder().connectTimeout(2, TimeUnit.SECONDS)
+                        .writeTimeout(2, TimeUnit.SECONDS)
+                        .readTimeout(2, TimeUnit.SECONDS)
+                        .build();
+                Request request = new Request.Builder()
+                        .url(URL.SERVER_CHECK_URL)
+                        .build();
+                String result = client.newCall(request).execute().body().string();
+                Log.d("CheckServer",result);
+                if(!result.equals("OK"))
+                {
+                    e.onError(new Throwable("网络错误"));
+                }
+                else
+                {
+                    Log.d("CheckServer","服务器连接正常！");
+                    e.onNext(true);
+                    e.onComplete();
+                }
+            }
+        });
+    }
 
     /**
      * 创建用户
@@ -45,7 +79,6 @@ public class UserConfig {
                 }
                 else//不存在则继续事件
                 {
-                    e.onNext(true);
                     //删除服务器上的账户
                     String DeleteResult = UserTasks.Task_DeleteUser(Username,
                             Base64.encodeToString(MD5(MD5(Password)).getBytes(),Base64.DEFAULT));
@@ -56,7 +89,6 @@ public class UserConfig {
                     else
                     {
                         Log.d("CreateUser","服务器账户清除成功！");
-                        e.onNext(true);
                         Boolean KeyResult= UserTasks.Task_GetKey(Username);
                         if(!KeyResult)
                         {
@@ -65,7 +97,6 @@ public class UserConfig {
                         else
                         {
                             Log.d("CreateUser","密钥获取成功！");
-                            e.onNext(true);
                             String CreateResult = UserTasks.Task_CreateUser(Username,
                                     SecurityTool.RSA_EncryptedWithPublicKey(Password),
                                     Base64.encodeToString(MD5(MD5(Password)).getBytes(),
@@ -76,11 +107,11 @@ public class UserConfig {
                                     break;
                                 case "OK":
                                     Log.d("CreateUser","创建账户成功！");
-                                    e.onNext(true);
                                     sp.edit().putString("username", Username)
                                             .putString("password", MD5(MD5(Password)))
                                             .apply();
                                     Log.d("CreateUser","数据写入成功！");
+                                    e.onNext(true);
                                     e.onComplete();
                                     break;
                                 default:
@@ -112,6 +143,7 @@ public class UserConfig {
                 if (DeleteResult.equals("AUTH NG")) {
                     e.onError(new Throwable("删除错误"));
                 } else {
+                    e.onNext(true);
                     e.onComplete();
                 }
             }
@@ -157,6 +189,7 @@ public class UserConfig {
                             e.onError(new Throwable("新密码错误"));
                             break;
                         default:
+                            e.onNext(true);
                             e.onComplete();
                             break;
                     }

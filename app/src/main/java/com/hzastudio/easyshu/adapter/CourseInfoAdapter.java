@@ -10,7 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.hzastudio.easyshu.R;
-import com.hzastudio.easyshu.support.data_bean.CourseInfo;
+import com.hzastudio.easyshu.support.data_bean.XKCourse;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class CourseInfoAdapter extends RecyclerView.Adapter<CourseInfoAdapter.ViewHolder>{
 
-    private List<CourseInfo> mCourseList;
+    private List<XKCourse> mCourseList;
 
     static class ViewHolder extends RecyclerView.ViewHolder{
         CardView cardView;
@@ -53,14 +53,14 @@ public class CourseInfoAdapter extends RecyclerView.Adapter<CourseInfoAdapter.Vi
         }
     }
 
-    public CourseInfoAdapter(List<CourseInfo> mCourseList) {
+    public CourseInfoAdapter(List<XKCourse> mCourseList) {
         this.mCourseList = mCourseList;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
         View view= LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.childlayout_courseinfo,parent,false);
+                .inflate(R.layout.recyclerview_courseinfo,parent,false);
         final ViewHolder holder=new ViewHolder(view);
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,7 +141,7 @@ public class CourseInfoAdapter extends RecyclerView.Adapter<CourseInfoAdapter.Vi
                 break;
             default:break;
         }
-        CourseInfo info=mCourseList.get(position);
+        XKCourse info=mCourseList.get(position);
         if(!info.getCourse_Is_Null()){
             holder.CourseName.setText(info.getCourse_Name());
             holder.CourseTeacher.setText(info.getTeacher_Name());

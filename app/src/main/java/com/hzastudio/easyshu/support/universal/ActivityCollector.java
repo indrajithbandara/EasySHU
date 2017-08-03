@@ -24,12 +24,12 @@ public class ActivityCollector {
         MyActivities.remove(activity);
     }
 
-    public static void RemoveAllActivities()
+    public static void FinishAllActivities()
     {
         for(Activity activity:MyActivities){
             if(!activity.isFinishing()){
                 activity.finish();
-                MyActivities.remove(activity);
+                //MyActivities.remove(activity);
             }
         }
     }

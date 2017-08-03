@@ -11,7 +11,7 @@ import android.os.Parcelable;
 /**
  * 课表中的课程信息，与选课信息分开为了更快的处理速度
  */
-public class CourseInfo implements Parcelable {
+public class XKCourse implements Parcelable {
 
     private String Course_Num;
     private String Course_Name;
@@ -39,7 +39,7 @@ public class CourseInfo implements Parcelable {
         Course_Is_Current = course_Is_Current;
     }
 
-    public CourseInfo() {
+    public XKCourse() {
         super();
     }
 
@@ -174,10 +174,10 @@ public class CourseInfo implements Parcelable {
         dest.writeString(Course_Ques_Place);
     }
 
-    public static final Creator<CourseInfo> CREATOR = new Creator<CourseInfo>() {
+    public static final Creator<XKCourse> CREATOR = new Creator<XKCourse>() {
         @Override
-        public CourseInfo createFromParcel(Parcel source) {
-            CourseInfo info = new CourseInfo();
+        public XKCourse createFromParcel(Parcel source) {
+            XKCourse info = new XKCourse();
             info.setCourse_Num(source.readString());
             info.setCourse_Name(source.readString());
             info.setTeacher_No(source.readString());
@@ -192,8 +192,8 @@ public class CourseInfo implements Parcelable {
         }
 
         @Override
-        public CourseInfo[] newArray(int size) {
-            return new CourseInfo[size];
+        public XKCourse[] newArray(int size) {
+            return new XKCourse[size];
         }
     };
 

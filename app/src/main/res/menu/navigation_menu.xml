@@ -1,34 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+
     <group
         android:id="@+id/Navigation_Menu_Group1"
         android:checkableBehavior="none">
 
         <item
             android:id="@+id/navigation_MyInfo"
-            android:title="我的信息" />
+            android:icon="@mipmap/personal_info"
+            android:title="@string/menu_personal_info" />
 
         <item
             android:id="@+id/navigation_CourseQuery"
-            android:title="课程查询"/>
+            android:icon="@mipmap/query"
+            android:title="@string/menu_course_query"/>
 
         <item
             android:id="@+id/navigation_CourseRank"
-            android:title="选课排名" />
+            android:icon="@mipmap/xk_rank"
+            android:title="@string/menu_course_rank" />
 
     </group>
 
     <group
         android:id="@+id/Navigation_Menu_Group2"
         android:checkableBehavior="none">
-
-        <item
-            android:id="@+id/navigation_ChooseClass"
-            android:title="选课" />
-
-        <item
-            android:id="@+id/navigation_QuitClass"
-            android:title="退课" />
 
     </group>
 

@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">EasySHU</string>
+    <string name="menu_personal_info">我的信息</string>
+    <string name="menu_course_query">课程查询</string>
+    <string name="menu_course_rank">选课排名</string>
+    <string name="LoginSubmitText">登 录</string>
+    <string name="LoginPasswordHintText">请输入密码</string>
+    <string name="LoginUsernameHintText">请输入学号</string>
 </resources>

@@ -13,6 +13,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Random;
 
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
@@ -38,8 +39,13 @@ public class SecurityTool {
         return ret.toString();
     }
 
+    /**
+     * 进行RSA加密
+     * @param input 输入待加密字符串
+     * @return 输出加密结果
+     */
     public static String RSA_EncryptedWithPublicKey(String input){
-        SharedPreferences sp = MainApplication.getContext().getSharedPreferences("data",
+        SharedPreferences sp = MainApplication.getContext().getSharedPreferences("user",
                 Context.MODE_PRIVATE);
         String publicKey = sp.getString("publicKey", null);
         String result="";
@@ -59,4 +65,44 @@ public class SecurityTool {
         return null;
     }
 
+    /**
+     * @param Username 用户名
+     * @param Password 密码
+     * @param RandomString 随机字符串
+     * @param TimeStamp 时间戳
+     * @return 签名
+     * @throws NoSuchAlgorithmException 异常
+     */
+    public static String SignatureGenerate(String Username,String Password,
+                                            String RandomString,String TimeStamp) throws NoSuchAlgorithmException
+    {
+        String target = Password +
+                Username +
+                RandomString +
+                TimeStamp;
+
+        MessageDigest sha1=MessageDigest.getInstance("SHA1");
+        sha1.update(target.getBytes());
+        byte[] m=sha1.digest();
+        StringBuilder ret=new StringBuilder(m.length<<1);
+        for (byte aM : m) {
+            ret.append(Character.forDigit((aM >> 4) & 0xf, 16));
+            ret.append(Character.forDigit(aM & 0xf, 16));
+        }
+        return ret.toString();
+    }
+
+    /**
+     * 生成指定长度的随机字符串
+     */
+    public static String getRandomString(int length) {
+        String base = "abcdefghijklmnopqrstuvwxyz0123456789";
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            int number = random.nextInt(base.length());
+            sb.append(base.charAt(number));
+        }
+        return sb.toString();
+    }
 }

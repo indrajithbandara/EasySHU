@@ -11,7 +11,16 @@ import com.hzastudio.easyshu.support.program_const.URL;
 import com.hzastudio.easyshu.support.tool.HttpFramework;
 import com.hzastudio.easyshu.support.universal.MainApplication;
 
+import java.security.PublicKey;
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.annotations.NonNull;
 import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
@@ -21,7 +30,6 @@ public class UserTasks {
     {
         HttpFramework handler= HttpFramework.getInstance();
         RequestBody body=new FormBody.Builder()
-                .add("action","user")
                 .add("function","CheckIfUserExist")
                 .add("data[usr]",Username)
                 .build();
@@ -38,14 +46,13 @@ public class UserTasks {
         {
             e.printStackTrace();
         }
-        return "NULL";
+        return null;
     }
 
     public static boolean Task_GetKey(String Username)
     {
         HttpFramework handler= HttpFramework.getInstance();
         RequestBody body=new FormBody.Builder()
-                .add("action","user")
                 .add("function","AcquirePublicKey")
                 .add("data[usr]",Username)
                 .build();
@@ -71,7 +78,7 @@ public class UserTasks {
                 publicKey=publicKey.replace("-----END PUBLIC KEY-----","");
                 Log.d("sss","PublicKey:"+publicKey);
                 //TODO:用AES128加密公钥防止泄露
-                SharedPreferences sp = MainApplication.getContext().getSharedPreferences("data",
+                SharedPreferences sp = MainApplication.getContext().getSharedPreferences("user",
                         Context.MODE_PRIVATE);
                 sp.edit().putString("publicKey",publicKey).apply();
                 return true;
@@ -92,7 +99,6 @@ public class UserTasks {
     {
         HttpFramework handler= HttpFramework.getInstance();
         RequestBody body=new FormBody.Builder()
-                .add("action","user")
                 .add("function","DeleteUserInfo")
                 .add("data[usr]",Username)
                 .add("data[pswconf]",Password)
@@ -110,14 +116,13 @@ public class UserTasks {
         {
             e.printStackTrace();
         }
-        return "NULL";
+        return null;
     }
 
     public static String Task_CreateUser(String Username, String Password, String PasswordConfig)
     {
         HttpFramework handler= HttpFramework.getInstance();
         RequestBody body=new FormBody.Builder()
-                .add("action","user")
                 .add("function","CreateNewUser")
                 .add("data[usr]",Username)
                 .add("data[psw]",Password)
@@ -136,7 +141,7 @@ public class UserTasks {
         {
             e.printStackTrace();
         }
-        return "NULL";
+        return null;
     }
 
     public static String Task_ChangeUserPassword(String Username, String OldPassword,
@@ -145,7 +150,6 @@ public class UserTasks {
     {
         HttpFramework handler= HttpFramework.getInstance();
         RequestBody body=new FormBody.Builder()
-                .add("action","user")
                 .add("function","ChangePassword")
                 .add("data[usr]",Username)
                 .add("data[newpsw]",NewPassword)
@@ -166,7 +170,7 @@ public class UserTasks {
         {
             e.printStackTrace();
         }
-        return "NULL";
+        return null;
     }
 
 }
