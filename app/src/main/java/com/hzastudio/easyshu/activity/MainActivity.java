@@ -20,14 +20,20 @@ import android.view.View;
 import com.hzastudio.easyshu.R;
 import com.hzastudio.easyshu.adapter.CourseTablePageAdapter;
 import com.hzastudio.easyshu.fragment.CourseTableDayFragment;
+import com.hzastudio.easyshu.module.UserConfig;
+import com.hzastudio.easyshu.support.data_bean.TableCourse;
+import com.hzastudio.easyshu.support.data_bean.TimeYearAndSeason;
 import com.hzastudio.easyshu.support.data_bean.UserCourse;
+import com.hzastudio.easyshu.support.tool.CourseClassify;
 import com.hzastudio.easyshu.support.tool.HttpFramework;
 import com.hzastudio.easyshu.support.universal.ActivityCollector;
 import com.hzastudio.easyshu.support.universal.BaseActivity;
 import com.hzastudio.easyshu.support.universal.MainApplication;
 import com.hzastudio.easyshu.task.CJTasks;
+import com.hzastudio.easyshu.task.TimeTasks;
 import com.hzastudio.easyshu.ui.widget.ViewPagerSwipeRefreshLayout;
 
+import java.sql.Ref;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -36,7 +42,10 @@ import java.util.Set;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.Response;
 
@@ -53,6 +62,8 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     private DrawerLayout CourseTableDrawerLayout;
 
     private boolean NavigationSelectedFlag=false;
+
+    private List<UserCourse> userCourses=new ArrayList<>();
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -115,12 +126,42 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
         /*启动逻辑*******************************START***********/
 
-        /*检查是否有保存课表*/
-        /*
-        SharedPreferences courseTable = MainApplication.getContext()
-                .getSharedPreferences("courseTable",MODE_PRIVATE);
-        Set<String> set = new HashSet<>();
-        */
+        /*首先检查是否有保存课表*/
+        SharedPreferences SavedCourseTable = MainApplication.getContext()
+                .getSharedPreferences("course_table",MODE_PRIVATE);
+        if(SavedCourseTable.getAll().size()!=0) {
+            //有：加载课表
+            userCourses = new ArrayList<>();
+            int count = 1;
+            while (count <= SavedCourseTable.getAll().size() / 9) {
+                UserCourse course = new UserCourse();
+                course.setCourseNum(SavedCourseTable.getString("CourseNum" + count, ""));
+                course.setCourseName(SavedCourseTable.getString("CourseName" + count, ""));
+                course.setTeacherNum(SavedCourseTable.getString("TeacherNum" + count, ""));
+                course.setTeacherName(SavedCourseTable.getString("TeacherName" + count, ""));
+                course.setCourseTime(SavedCourseTable.getString("CourseTime" + count, ""));
+                course.setCourseRoom(SavedCourseTable.getString("CourseRoom" + count, ""));
+                course.setCourseQuesTime(SavedCourseTable.getString("CourseQuesTime" + count, ""));
+                course.setCourseQuesPlace(SavedCourseTable.getString("CourseQuesPlace" + count, ""));
+                course.setCourseTimeDetail(SavedCourseTable.getString("CourseTimeDetail" + count, ""));
+                userCourses.add(course);
+                count++;
+            }
+            List<List<TableCourse>> result = CourseClassify.ClassifyToTableCourseList(userCourses);
+            int i=0;
+            for(List<TableCourse> list : result)
+            {
+                ((CourseTableDayFragment)pageAdapter.getItem(i)).setCourseList(list);
+                i++;
+            }
+        }
+        else
+        {
+            //没有：检查本地账号
+            
+            RefreshCourseTable();
+        }
+
 
         /*启动逻辑*******************************END*************/
 
@@ -183,15 +224,80 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     }
 
     private void RefreshCourseTable() {
-        Observable.create(new ObservableOnSubscribe<Void>() {
+        Observable.create(new ObservableOnSubscribe<List<TableCourse>>() {
             @Override
-            public void subscribe(@io.reactivex.annotations.NonNull ObservableEmitter<Void> e) throws Exception {
-                List<UserCourse> list = CJTasks.Task_CJ_getCourseTable("16121683");
-
+            public void subscribe(@io.reactivex.annotations.NonNull ObservableEmitter<List<TableCourse>> e) throws Exception {
+                TimeYearAndSeason time = TimeTasks.Task_GetYearAndSeason();
+                String year=time.getTermYear();
+                String season="";
+                switch (time.getTermSeason()) {
+                    case "春":
+                        season = "3";
+                        break;
+                    case "夏":
+                        season = "5";
+                        break;
+                    case "秋":
+                        season = "1";
+                        break;
+                    case "冬":
+                        season = "2";
+                        break;
+                    default:
+                        break;
+                }
+                List<UserCourse> courseList = CJTasks.Task_CJ_getCourseTable("16121683",year,season);
+                //////////////////保存课表
+                int Count=1;
+                SharedPreferences preferences=getSharedPreferences("course_table",MODE_PRIVATE);
+                SharedPreferences.Editor editor=preferences.edit();
+                editor.clear();
+                for(UserCourse a:courseList){
+                    editor.putString("CourseNum"+Count,a.getCourseNum());
+                    editor.putString("CourseName"+Count,a.getCourseName());
+                    editor.putString("TeacherNum"+Count,a.getTeacherNum());
+                    editor.putString("TeacherName"+Count,a.getTeacherName());
+                    editor.putString("CourseTime"+Count,a.getCourseTime());
+                    editor.putString("CourseRoom"+Count,a.getCourseRoom());
+                    editor.putString("CourseQuesTime"+Count,a.getCourseQuesTime());
+                    editor.putString("CourseQuesPlace"+Count,a.getCourseQuesPlace());
+                    editor.putString("CourseTimeDetail"+Count,a.getCourseTimeDetail());
+                    Count++;
+                }
+                editor.apply();
+                /////////////////////////
+                List<List<TableCourse>> result = CourseClassify.ClassifyToTableCourseList(courseList);
+                for(List<TableCourse> list : result)
+                {
+                    e.onNext(list);
+                }
+                e.onComplete();
             }
         }).subscribeOn(Schedulers.newThread())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe();
+        .subscribe(new Observer<List<TableCourse>>() {
+            int i=0;
+            @Override
+            public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(@io.reactivex.annotations.NonNull List<TableCourse> tableCourses) {
+                ((CourseTableDayFragment)pageAdapter.getItem(i)).setCourseList(tableCourses);
+                i++;
+            }
+
+            @Override
+            public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                SwipeRefresh.setRefreshing(false);
+            }
+        });
     }
 
 }

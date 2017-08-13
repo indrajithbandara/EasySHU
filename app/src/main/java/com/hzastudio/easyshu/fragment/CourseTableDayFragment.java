@@ -10,15 +10,16 @@ import android.view.ViewGroup;
 
 import com.hzastudio.easyshu.R;
 import com.hzastudio.easyshu.adapter.CourseInfoAdapter;
-import com.hzastudio.easyshu.support.data_bean.XKCourse;
+import com.hzastudio.easyshu.support.data_bean.TableCourse;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CourseTableDayFragment extends Fragment{
 
     private RecyclerView courseView;
     private CourseInfoAdapter adapter;
-    private ArrayList<XKCourse> CourseList=new ArrayList<>();
+    private List<TableCourse> CourseList=new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -30,7 +31,7 @@ public class CourseTableDayFragment extends Fragment{
         return view;
     }
 
-    public void setCourseList(ArrayList<XKCourse> courseList) {
+    public void setCourseList(List<TableCourse> courseList) {
         CourseList=new ArrayList<>();
         CourseList.addAll(courseList);
         if(courseView!=null)

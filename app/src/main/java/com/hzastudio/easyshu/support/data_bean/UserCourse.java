@@ -8,9 +8,9 @@ public class UserCourse {
     private String CourseNum;
     @SerializedName("course_name")
     private String CourseName;
-    @SerializedName("teacher_num")
+    @SerializedName("course_teacher_num")
     private String TeacherNum;
-    @SerializedName("teacher_name")
+    @SerializedName("course_teacher_name")
     private String TeacherName;
     @SerializedName("course_time")
     private String CourseTime;
@@ -20,6 +20,8 @@ public class UserCourse {
     private String CourseQuesTime;
     @SerializedName("course_ques_place")
     private String CourseQuesPlace;
+    @SerializedName("course_time_detail")
+    private String CourseTimeDetail;
 
     public String getCourseNum() {
         return CourseNum;
@@ -83,5 +85,13 @@ public class UserCourse {
 
     public void setCourseQuesPlace(String courseQuesPlace) {
         CourseQuesPlace = courseQuesPlace;
+    }
+
+    public String getCourseTimeDetail() {
+        return CourseTimeDetail;
+    }
+
+    public void setCourseTimeDetail(String courseTimeDetail) {
+        CourseTimeDetail = courseTimeDetail;
     }
 }

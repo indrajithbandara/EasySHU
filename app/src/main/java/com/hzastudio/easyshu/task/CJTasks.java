@@ -36,7 +36,7 @@ public class CJTasks {
         return Ret;
     }
 
-    public static List<UserCourse> Task_CJ_getCourseTable(String Username)
+    public static List<UserCourse> Task_CJ_getCourseTable(String Username,String Year,String Season)
             throws NoSuchAlgorithmException,IOException,NullPointerException
     {
         HttpFramework handler= HttpFramework.getInstance();
@@ -49,6 +49,8 @@ public class CJTasks {
                 .add("sign",user[4])
                 .add("function","CJ_getCourseTable")
                 .add("data[usr]",Username)
+                .add("data[year]",Year)
+                .add("data[season]",Season)
                 .build();
 
         Response response = handler.httpPost(URL.SERVER_INTERFACE_URL,body).execute();

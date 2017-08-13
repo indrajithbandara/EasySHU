@@ -10,7 +10,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.hzastudio.easyshu.R;
-import com.hzastudio.easyshu.support.data_bean.XKCourse;
+import com.hzastudio.easyshu.support.data_bean.TableCourse;
+import com.hzastudio.easyshu.support.data_bean.UserCourse;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ import java.util.List;
  */
 public class CourseInfoAdapter extends RecyclerView.Adapter<CourseInfoAdapter.ViewHolder>{
 
-    private List<XKCourse> mCourseList;
+    private List<TableCourse> mCourseList;
 
     static class ViewHolder extends RecyclerView.ViewHolder{
         CardView cardView;
@@ -53,7 +54,7 @@ public class CourseInfoAdapter extends RecyclerView.Adapter<CourseInfoAdapter.Vi
         }
     }
 
-    public CourseInfoAdapter(List<XKCourse> mCourseList) {
+    public CourseInfoAdapter(List<TableCourse> mCourseList) {
         this.mCourseList = mCourseList;
     }
 
@@ -141,11 +142,11 @@ public class CourseInfoAdapter extends RecyclerView.Adapter<CourseInfoAdapter.Vi
                 break;
             default:break;
         }
-        XKCourse info=mCourseList.get(position);
-        if(!info.getCourse_Is_Null()){
-            holder.CourseName.setText(info.getCourse_Name());
-            holder.CourseTeacher.setText(info.getTeacher_Name());
-            holder.CoursePlace.setText(info.getCourse_Place());
+        TableCourse course=mCourseList.get(position);
+        if(course!=null){
+            holder.CourseName.setText(course.getCourseName());
+            holder.CourseTeacher.setText(course.getTeacherName());
+            holder.CoursePlace.setText(course.getCoursePlace());
             holder.Teacher.setVisibility(View.VISIBLE);
             holder.ClassRoom.setVisibility(View.VISIBLE);
         }else{
@@ -154,11 +155,6 @@ public class CourseInfoAdapter extends RecyclerView.Adapter<CourseInfoAdapter.Vi
             holder.CoursePlace.setText(null);
             holder.Teacher.setVisibility(View.INVISIBLE);
             holder.ClassRoom.setVisibility(View.INVISIBLE);
-        }
-        if(info.getCourse_Is_Current()){
-            holder.Indicator.setVisibility(View.VISIBLE);
-        }else{
-            holder.Indicator.setVisibility(View.INVISIBLE);
         }
     }
 
