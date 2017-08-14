@@ -13,19 +13,17 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.hzastudio.easyshu.R;
 import com.hzastudio.easyshu.adapter.CourseTablePageAdapter;
 import com.hzastudio.easyshu.fragment.CourseTableDayFragment;
-import com.hzastudio.easyshu.module.UserConfig;
+import com.hzastudio.easyshu.support.data_bean.CurrentCourseInfo;
 import com.hzastudio.easyshu.support.data_bean.TableCourse;
 import com.hzastudio.easyshu.support.data_bean.TimeYearAndSeason;
 import com.hzastudio.easyshu.support.data_bean.UserCourse;
-import com.hzastudio.easyshu.support.tool.CourseClassify;
-import com.hzastudio.easyshu.support.tool.HttpFramework;
+import com.hzastudio.easyshu.support.tool.CourseProcessor;
 import com.hzastudio.easyshu.support.universal.ActivityCollector;
 import com.hzastudio.easyshu.support.universal.BaseActivity;
 import com.hzastudio.easyshu.support.universal.MainApplication;
@@ -33,11 +31,8 @@ import com.hzastudio.easyshu.task.CJTasks;
 import com.hzastudio.easyshu.task.TimeTasks;
 import com.hzastudio.easyshu.ui.widget.ViewPagerSwipeRefreshLayout;
 
-import java.sql.Ref;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -45,9 +40,7 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
-import okhttp3.Response;
 
 public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener,
                                                           View.OnClickListener,
@@ -147,7 +140,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 userCourses.add(course);
                 count++;
             }
-            List<List<TableCourse>> result = CourseClassify.ClassifyToTableCourseList(userCourses);
+            List<List<TableCourse>> result = CourseProcessor.ClassifyToTableCourseList(userCourses);
             int i=0;
             for(List<TableCourse> list : result)
             {
@@ -157,11 +150,10 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         }
         else
         {
-            //没有：检查本地账号
-            
+            //无，刷新课表
+            SwipeRefresh.setRefreshing(true);
             RefreshCourseTable();
         }
-
 
         /*启动逻辑*******************************END*************/
 
@@ -174,6 +166,13 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
     @Override
     public void onClick(View v) {
+        switch (v.getId())
+        {
+            case R.id.CourseTableFloatingButton:
+                //TODO:当前课程的定位
+
+                break;
+        }
     }
 
     @Override
@@ -223,6 +222,9 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         return false;
     }
 
+    /**
+     * 刷新课表
+     */
     private void RefreshCourseTable() {
         Observable.create(new ObservableOnSubscribe<List<TableCourse>>() {
             @Override
@@ -266,7 +268,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 }
                 editor.apply();
                 /////////////////////////
-                List<List<TableCourse>> result = CourseClassify.ClassifyToTableCourseList(courseList);
+                List<List<TableCourse>> result = CourseProcessor.ClassifyToTableCourseList(courseList);
                 for(List<TableCourse> list : result)
                 {
                     e.onNext(list);

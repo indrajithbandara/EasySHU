@@ -1,13 +1,22 @@
 package com.hzastudio.easyshu.support.tool;
 
+import com.hzastudio.easyshu.support.data_bean.CurrentCourseInfo;
 import com.hzastudio.easyshu.support.data_bean.TableCourse;
 import com.hzastudio.easyshu.support.data_bean.UserCourse;
+import com.hzastudio.easyshu.support.program_const.CourseStatus;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CourseClassify {
+import static com.hzastudio.easyshu.support.program_const.CourseStatus.COURSE_TIME_LIST;
 
+public class CourseProcessor {
+
+    /**
+     * 将课表按照星期分组
+     * @param Input UserCourse原始课表
+     * @return “List<List<TableCourse>>” 分组后的课表集合
+     */
     public static List<List<TableCourse>> ClassifyToTableCourseList(List<UserCourse> Input)
     {
         List<List<TableCourse>> ret = new ArrayList<>();
@@ -58,4 +67,32 @@ public class CourseClassify {
         return ret;
     }
 
+    /**
+     * 依据当前课程时间返回课程位置和状态
+     * @return
+     */
+    public static CurrentCourseInfo GetCurrentCoursePos(List<UserCourse> mCourseList) {
+        //List<List<TableCourse>> list=ClassifyToTableCourseList(mCourseList);
+        //首先定位当前课程位置（课间取下一节为基准）
+        int CourseTime = -1;
+        for (int i = 0; i < COURSE_TIME_LIST.length; i++) {
+            if (COURSE_TIME_LIST[i].CompareTo() == 0) {
+                CourseTime=i;
+                break;
+            } else if (COURSE_TIME_LIST[i].CompareTo() == -1) {
+                if (i == 0) {
+                    CourseTime=0;
+                    break;
+                } else {
+                    if (COURSE_TIME_LIST[i - 1].CompareTo() == 1) {
+                        CourseTime=i;
+                        break;
+                    }
+                }
+            }
+        }
+        //然后获取当前周数，当前星期
+
+        return null;
+    }
 }
