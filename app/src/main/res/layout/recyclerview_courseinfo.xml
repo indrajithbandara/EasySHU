@@ -130,8 +130,9 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:layout_marginTop="5dp"
-                android:gravity="start"
                 android:ellipsize="end"
+                android:gravity="start"
+                android:lines="1"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintDimensionRatio="1:0.5" />
@@ -149,7 +150,8 @@
                     android:id="@+id/Teacher"
                     android:layout_width="26dp"
                     android:layout_height="26dp"
-                    android:layout_gravity="center" />
+                    android:layout_gravity="center"
+                    android:background="@mipmap/teacher" />
 
                 <TextView
                     android:id="@+id/CourseTeacher"
@@ -175,7 +177,8 @@
                     android:id="@+id/Classroom"
                     android:layout_width="26dp"
                     android:layout_height="26dp"
-                    android:layout_gravity="center" />
+                    android:layout_gravity="center"
+                    android:background="@mipmap/classroom" />
 
                 <TextView
                     android:id="@+id/CoursePlace"
@@ -198,7 +201,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_begin="31dp" />
+            app:layout_constraintGuide_begin="21dp" />
 
         <android.support.constraint.Guideline
             android:id="@+id/guideline11"

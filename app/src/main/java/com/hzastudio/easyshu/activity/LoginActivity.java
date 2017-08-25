@@ -77,6 +77,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener
         {
             case R.id.Login_Submit:
                 progressDialog.setMessage("验证中，请稍后");
+                progressDialog.setCancelable(false);
                 progressDialog.show();
                 UserConfig.CheckServer()
                         .flatMap(new Function<Boolean, ObservableSource<Boolean>>() {
@@ -95,7 +96,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener
                                            progressDialog.dismiss();
                                            SharedPreferences app= MainApplication.getContext().getSharedPreferences("application",MODE_PRIVATE);
                                            app.edit().putBoolean("firstLaunch",false).apply();
-                                           StartNewActivity(LoginActivity.this,MainActivity.class);
+                                           StartNewActivity(LoginActivity.this,MainActivity.class,false);
                                            finish();
                                        }
                                    },

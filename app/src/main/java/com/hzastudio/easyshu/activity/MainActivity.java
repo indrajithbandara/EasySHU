@@ -1,5 +1,6 @@
 package com.hzastudio.easyshu.activity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,30 +14,27 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.hzastudio.easyshu.R;
 import com.hzastudio.easyshu.adapter.CourseTablePageAdapter;
 import com.hzastudio.easyshu.fragment.CourseTableDayFragment;
-import com.hzastudio.easyshu.support.data_bean.CurrentCourseInfo;
+import com.hzastudio.easyshu.module.CJSystemHandler;
+import com.hzastudio.easyshu.support.data_bean.CurrentCourse;
 import com.hzastudio.easyshu.support.data_bean.TableCourse;
-import com.hzastudio.easyshu.support.data_bean.TimeYearAndSeason;
 import com.hzastudio.easyshu.support.data_bean.UserCourse;
+import com.hzastudio.easyshu.support.program_const.CourseStatus;
 import com.hzastudio.easyshu.support.tool.CourseProcessor;
 import com.hzastudio.easyshu.support.universal.ActivityCollector;
 import com.hzastudio.easyshu.support.universal.BaseActivity;
 import com.hzastudio.easyshu.support.universal.MainApplication;
-import com.hzastudio.easyshu.task.CJTasks;
-import com.hzastudio.easyshu.task.TimeTasks;
 import com.hzastudio.easyshu.ui.widget.ViewPagerSwipeRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -57,6 +55,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     private boolean NavigationSelectedFlag=false;
 
     private List<UserCourse> userCourses=new ArrayList<>();
+    private List<List<TableCourse>> tableCourses=new ArrayList<>();
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -140,9 +139,9 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 userCourses.add(course);
                 count++;
             }
-            List<List<TableCourse>> result = CourseProcessor.ClassifyToTableCourseList(userCourses);
+            tableCourses = CourseProcessor.ClassifyToTableCourseList(userCourses);
             int i=0;
-            for(List<TableCourse> list : result)
+            for(List<TableCourse> list : tableCourses)
             {
                 ((CourseTableDayFragment)pageAdapter.getItem(i)).setCourseList(list);
                 i++;
@@ -153,6 +152,71 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
             //无，刷新课表
             SwipeRefresh.setRefreshing(true);
             RefreshCourseTable();
+        }
+
+        /*获取传入的数据****************************START**********/
+        Intent data = this.getIntent();
+        //传入true说明要刷新课表(学期更新)
+        if(data.getBooleanExtra("data",false))
+        {
+            SwipeRefresh.setRefreshing(true);
+            RefreshCourseTable();
+        }
+        /*获取传入的数据****************************END************/
+
+        if(userCourses.size()!=0) {
+            //定位课表
+            //等待加载完成
+            Thread Wait = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    if (((CourseTableDayFragment) pageAdapter.getItem(0)).getCourseView() == null) {
+                        try {
+                            Thread.sleep(1);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+            Wait.start();
+            try {
+                Wait.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            //获取当前课程的定位以及状态信息
+            CurrentCourse course = CourseProcessor.GetCurrentCoursePos(userCourses);
+            //Log.d("MainActivity","CourseTime:"+course.getCurrentCourseTime());
+            //Log.d("MainActivity","CourseWeekday:"+course.getCurrentCourseWeekday());
+            //Log.d("MainActivity","CourseStatus:"+course.getCurrentCourseStatus());
+            //显示当前课程指示器
+            for (List<TableCourse> tmp1 : tableCourses) {
+                for (TableCourse tmp2 : tmp1) {
+                    if (tmp2 != null) tmp2.setCourseIsCurrent(false);
+                }
+            }
+            if (course.getCurrentCourseStatus() != CourseStatus.STATUS_NULL &&
+                    course.getCurrentCourseStatus() != CourseStatus.STATUS_NOT_COURSE_TIME) {
+                tableCourses.get(course.getCurrentCourseWeekday() - 1)
+                        .get(course.getCurrentCourseTime())
+                        .setCourseIsCurrent(true);
+            }
+
+            //刷新课表
+            for (int i = 0; i < 5; i++) {
+                ((CourseTableDayFragment) pageAdapter.getItem(i)).setCourseList(tableCourses.get(i));
+            }
+
+            if (course.getCurrentCourseStatus() != CourseStatus.STATUS_NULL &&
+                    course.getCurrentCourseStatus() != CourseStatus.STATUS_NOT_COURSE_TIME) {
+                //移动到当前课程的星期
+                tabs.getTabAt(course.getCurrentCourseWeekday() - 1).select();
+                //移动到当前课程的时间
+                CourseTableDayFragment fragment = (CourseTableDayFragment)
+                        pageAdapter.getItem(course.getCurrentCourseWeekday() - 1);
+                fragment.CourseViewScrollTo(course.getCurrentCourseTime());
+            }
         }
 
         /*启动逻辑*******************************END*************/
@@ -169,8 +233,44 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         switch (v.getId())
         {
             case R.id.CourseTableFloatingButton:
-                //TODO:当前课程的定位
+                if(SwipeRefresh.isRefreshing()||userCourses==null||tableCourses==null)break;
+                //获取当前课程的定位以及状态信息
+                CurrentCourse course = CourseProcessor.GetCurrentCoursePos(userCourses);
+                //Log.d("MainActivity","CourseTime:"+course.getCurrentCourseTime());
+                //Log.d("MainActivity","CourseWeekday:"+course.getCurrentCourseWeekday());
+                //Log.d("MainActivity","CourseStatus:"+course.getCurrentCourseStatus());
+                //显示当前课程指示器
+                for(List<TableCourse> tmp1 : tableCourses)
+                {
+                    for (TableCourse tmp2 : tmp1)
+                    {
+                        if(tmp2!=null) tmp2.setCourseIsCurrent(false);
+                    }
+                }
+                if(course.getCurrentCourseStatus()!= CourseStatus.STATUS_NULL &&
+                        course.getCurrentCourseStatus()!= CourseStatus.STATUS_NOT_COURSE_TIME)
+                {
+                    tableCourses.get(course.getCurrentCourseWeekday()-1)
+                            .get(course.getCurrentCourseTime())
+                            .setCourseIsCurrent(true);
+                }
 
+                //刷新课表
+                for(int i=0;i<5;i++)
+                {
+                    ((CourseTableDayFragment)pageAdapter.getItem(i)).setCourseList(tableCourses.get(i));
+                }
+
+                if(course.getCurrentCourseStatus()!= CourseStatus.STATUS_NULL &&
+                        course.getCurrentCourseStatus()!=CourseStatus.STATUS_NOT_COURSE_TIME)
+                {
+                    //移动到当前课程的星期
+                    tabs.getTabAt(course.getCurrentCourseWeekday()-1).select();
+                    //移动到当前课程的时间
+                    CourseTableDayFragment fragment =(CourseTableDayFragment)
+                            pageAdapter.getItem(course.getCurrentCourseWeekday()-1);
+                    fragment.CourseViewScrollTo(course.getCurrentCourseTime());
+                }
                 break;
         }
     }
@@ -222,62 +322,13 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         return false;
     }
 
-    /**
-     * 刷新课表
-     */
+    ////////////工具函数/////////////
+    /*刷新课表*/
     private void RefreshCourseTable() {
-        Observable.create(new ObservableOnSubscribe<List<TableCourse>>() {
-            @Override
-            public void subscribe(@io.reactivex.annotations.NonNull ObservableEmitter<List<TableCourse>> e) throws Exception {
-                TimeYearAndSeason time = TimeTasks.Task_GetYearAndSeason();
-                String year=time.getTermYear();
-                String season="";
-                switch (time.getTermSeason()) {
-                    case "春":
-                        season = "3";
-                        break;
-                    case "夏":
-                        season = "5";
-                        break;
-                    case "秋":
-                        season = "1";
-                        break;
-                    case "冬":
-                        season = "2";
-                        break;
-                    default:
-                        break;
-                }
-                List<UserCourse> courseList = CJTasks.Task_CJ_getCourseTable("16121683",year,season);
-                //////////////////保存课表
-                int Count=1;
-                SharedPreferences preferences=getSharedPreferences("course_table",MODE_PRIVATE);
-                SharedPreferences.Editor editor=preferences.edit();
-                editor.clear();
-                for(UserCourse a:courseList){
-                    editor.putString("CourseNum"+Count,a.getCourseNum());
-                    editor.putString("CourseName"+Count,a.getCourseName());
-                    editor.putString("TeacherNum"+Count,a.getTeacherNum());
-                    editor.putString("TeacherName"+Count,a.getTeacherName());
-                    editor.putString("CourseTime"+Count,a.getCourseTime());
-                    editor.putString("CourseRoom"+Count,a.getCourseRoom());
-                    editor.putString("CourseQuesTime"+Count,a.getCourseQuesTime());
-                    editor.putString("CourseQuesPlace"+Count,a.getCourseQuesPlace());
-                    editor.putString("CourseTimeDetail"+Count,a.getCourseTimeDetail());
-                    Count++;
-                }
-                editor.apply();
-                /////////////////////////
-                List<List<TableCourse>> result = CourseProcessor.ClassifyToTableCourseList(courseList);
-                for(List<TableCourse> list : result)
-                {
-                    e.onNext(list);
-                }
-                e.onComplete();
-            }
-        }).subscribeOn(Schedulers.newThread())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Observer<List<TableCourse>>() {
+        CJSystemHandler.GetCourseTable()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<List<TableCourse>>() {
             int i=0;
             @Override
             public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
@@ -301,5 +352,5 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
             }
         });
     }
-
+    ////////////////////////////////
 }

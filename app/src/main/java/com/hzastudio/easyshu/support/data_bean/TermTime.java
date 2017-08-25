@@ -2,12 +2,14 @@ package com.hzastudio.easyshu.support.data_bean;
 
 import com.google.gson.annotations.SerializedName;
 
-public class TimeYearAndSeason {
+public class TermTime {
 
     @SerializedName("year")
     private String TermYear;
     @SerializedName("season")
     private String TermSeason;
+    @SerializedName("calendar")
+    private String Calendar;
 
     public String getTermYear() {
         return TermYear;
@@ -23,5 +25,13 @@ public class TimeYearAndSeason {
 
     public void setTermSeason(String termSeason) {
         TermSeason = termSeason;
+    }
+
+    public String getCalendar() {
+        return Calendar;
+    }
+
+    public void setCalendar(String calendar) {
+        Calendar = calendar;
     }
 }

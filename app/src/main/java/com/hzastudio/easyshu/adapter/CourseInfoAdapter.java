@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.hzastudio.easyshu.R;
 import com.hzastudio.easyshu.support.data_bean.TableCourse;
 import com.hzastudio.easyshu.support.data_bean.UserCourse;
+import com.hzastudio.easyshu.support.tool.CourseProcessor;
 
 import java.util.List;
 
@@ -74,7 +75,7 @@ public class CourseInfoAdapter extends RecyclerView.Adapter<CourseInfoAdapter.Vi
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        switch (position){
+        switch (position) {
             case 0:
                 holder.CourseTimeNum.setText("1");
                 holder.CourseStartTime.setText("8:00");
@@ -140,21 +141,26 @@ public class CourseInfoAdapter extends RecyclerView.Adapter<CourseInfoAdapter.Vi
                 holder.CourseStartTime.setText("19:50");
                 holder.CourseEndTime.setText("20:35");
                 break;
-            default:break;
+            default:
+                break;
         }
-        TableCourse course=mCourseList.get(position);
-        if(course!=null){
+        TableCourse course = mCourseList.get(position);
+        if (course != null && CourseProcessor.getTableCourseWeek(course)
+                .contains(CourseProcessor.getCurrentWeek())) {
             holder.CourseName.setText(course.getCourseName());
             holder.CourseTeacher.setText(course.getTeacherName());
             holder.CoursePlace.setText(course.getCoursePlace());
             holder.Teacher.setVisibility(View.VISIBLE);
             holder.ClassRoom.setVisibility(View.VISIBLE);
-        }else{
+            if (course.getCourseIsCurrent()) holder.Indicator.setVisibility(View.VISIBLE);
+            else holder.Indicator.setVisibility(View.INVISIBLE);
+        } else {
             holder.CourseName.setText(null);
             holder.CourseTeacher.setText(null);
             holder.CoursePlace.setText(null);
             holder.Teacher.setVisibility(View.INVISIBLE);
             holder.ClassRoom.setVisibility(View.INVISIBLE);
+            holder.Indicator.setVisibility(View.INVISIBLE);
         }
     }
 

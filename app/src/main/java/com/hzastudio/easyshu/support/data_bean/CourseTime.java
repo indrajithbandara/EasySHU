@@ -1,5 +1,7 @@
 package com.hzastudio.easyshu.support.data_bean;
 
+import android.util.Log;
+
 import java.util.Calendar;
 
 public class CourseTime {
@@ -16,8 +18,10 @@ public class CourseTime {
     public int CompareTo()
     {
         Calendar calendar = Calendar.getInstance();
-        int hour = calendar.get(Calendar.HOUR);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
+        //Log.d("CourseTime","hour:"+hour);
+        //Log.d("CourseTime","minute:"+minute);
         int inputRes=hour*60+minute;
         int startRes=StartHour*60+StartMinute;
         int endRes=EndHour*60+EndMinute;

@@ -11,10 +11,10 @@ package com.hzastudio.easyshu.support.data_bean;
  */
 public class TableCourse{
 
-    private String CourseName;
-    private String TeacherName;
-    private String CoursePlace;
-    private String CourseTableWeek; //课程出现的周
+    private String CourseName=null;
+    private String TeacherName=null;
+    private String CoursePlace=null;
+    private String CourseTableWeek=null; //课程出现的周
     private Boolean CourseIsCurrent=false;//是否为当前课程
 
     public TableCourse() {
