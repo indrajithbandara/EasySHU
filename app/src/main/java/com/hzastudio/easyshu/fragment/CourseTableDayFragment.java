@@ -4,13 +4,12 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.hzastudio.easyshu.R;
-import com.hzastudio.easyshu.adapter.CourseInfoAdapter;
+import com.hzastudio.easyshu.adapter.CourseTableRecyclerViewAdapter;
 import com.hzastudio.easyshu.support.data_bean.TableCourse;
 
 import java.util.ArrayList;
@@ -19,7 +18,7 @@ import java.util.List;
 public class CourseTableDayFragment extends Fragment{
 
     private RecyclerView courseView;
-    private CourseInfoAdapter adapter;
+    private CourseTableRecyclerViewAdapter adapter;
     private LinearLayoutManager courseViewManager;
     private List<TableCourse> CourseList=new ArrayList<>();
 
@@ -29,7 +28,7 @@ public class CourseTableDayFragment extends Fragment{
         courseView = (RecyclerView) view.findViewById(R.id.CourseView);
         courseViewManager = new LinearLayoutManager(this.getActivity());
         courseView.setLayoutManager(courseViewManager);
-        adapter=new CourseInfoAdapter(CourseList);
+        adapter=new CourseTableRecyclerViewAdapter(CourseList);
         courseView.setAdapter(adapter);
         return view;
     }
@@ -39,7 +38,7 @@ public class CourseTableDayFragment extends Fragment{
         CourseList.addAll(courseList);
         if(courseView!=null)
         {
-            adapter=new CourseInfoAdapter(CourseList);
+            adapter=new CourseTableRecyclerViewAdapter(CourseList);
             courseView.setAdapter(adapter);
         }
     }

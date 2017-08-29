@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.hzastudio.easyshu.R;
 import com.hzastudio.easyshu.support.data_bean.TableCourse;
-import com.hzastudio.easyshu.support.data_bean.UserCourse;
 import com.hzastudio.easyshu.support.tool.CourseProcessor;
 
 import java.util.List;
@@ -20,7 +19,7 @@ import java.util.List;
  * Programmed by Zean Huang
  * Github: https://github.com/thunderbird1997
  */
-public class CourseInfoAdapter extends RecyclerView.Adapter<CourseInfoAdapter.ViewHolder>{
+public class CourseTableRecyclerViewAdapter extends RecyclerView.Adapter<CourseTableRecyclerViewAdapter.ViewHolder>{
 
     private List<TableCourse> mCourseList;
 
@@ -55,14 +54,14 @@ public class CourseInfoAdapter extends RecyclerView.Adapter<CourseInfoAdapter.Vi
         }
     }
 
-    public CourseInfoAdapter(List<TableCourse> mCourseList) {
+    public CourseTableRecyclerViewAdapter(List<TableCourse> mCourseList) {
         this.mCourseList = mCourseList;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
         View view= LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.recyclerview_courseinfo,parent,false);
+                .inflate(R.layout.recyclerview_course_table_child_layout,parent,false);
         final ViewHolder holder=new ViewHolder(view);
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override

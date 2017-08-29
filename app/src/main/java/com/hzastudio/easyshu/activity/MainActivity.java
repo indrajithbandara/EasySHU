@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
@@ -17,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.hzastudio.easyshu.R;
 import com.hzastudio.easyshu.adapter.CourseTablePageAdapter;
@@ -51,8 +53,10 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     private ViewPager viewPager;
     private TabLayout tabs;
     private DrawerLayout CourseTableDrawerLayout;
+    private FloatingActionButton CourseTableFloatingButton;
 
     private boolean NavigationSelectedFlag=false;
+    private long BackPressTimer=0;
 
     private List<UserCourse> userCourses=new ArrayList<>();
     private List<List<TableCourse>> tableCourses=new ArrayList<>();
@@ -111,7 +115,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         /*NavigationView导航栏组件***************END**************/
 
         /*FloatButton悬浮按钮组件*****************START***********/
-        FloatingActionButton CourseTableFloatingButton = (FloatingActionButton)
+        CourseTableFloatingButton = (FloatingActionButton)
                 findViewById(R.id.CourseTableFloatingButton);
         CourseTableFloatingButton.setOnClickListener(this);
         /*FloatButton悬浮按钮组件*****************END*************/
@@ -288,11 +292,19 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
     @Override
     public void onBackPressed() {
-        ActivityCollector.FinishAllActivities();
+        //两次按返回键间隔一秒有效
+        if(System.currentTimeMillis()-BackPressTimer<1000)
+        {
+            ActivityCollector.FinishAllActivities();
+            return;
+        }
+        BackPressTimer=System.currentTimeMillis();
+        Snackbar.make(CourseTableFloatingButton,"再按一次返回键回到桌面",Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull final MenuItem item) {
+        //等到滑动抽屉完全关闭后再打开新活动
         CourseTableDrawerLayout.closeDrawers();
         NavigationSelectedFlag=true;
         CourseTableDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
@@ -316,6 +328,13 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
                 if(newState==DrawerLayout.STATE_IDLE && NavigationSelectedFlag){
                     NavigationSelectedFlag=false;
                     CourseTableDrawerLayout.removeDrawerListener(this);
+                    switch (item.getItemId())
+                    {
+                        case R.id.Navigation_CourseQuery:
+                            StartNewActivity(MainActivity.this,CourseQueryActivity.class);
+                            break;
+                        default:break;
+                    }
                 }
             }
         });
