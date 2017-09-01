@@ -43,6 +43,13 @@ public class BaseActivity extends AppCompatActivity {
         From.startActivity(intent);
     }
 
+    public static void StartNewActivity(Context From,Class<?> To,int data)
+    {
+        Intent intent=new Intent(From,To);
+        intent.putExtra("data",data);
+        From.startActivity(intent);
+    }
+
     public static void StartNewActivity(Context From,Class<?> To,Bundle data)
     {
         Intent intent=new Intent(From,To);

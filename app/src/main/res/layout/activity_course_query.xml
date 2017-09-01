@@ -14,7 +14,7 @@
         <android.support.design.widget.AppBarLayout
             android:id="@+id/CourseQueryAppBarLayout"
             android:layout_width="match_parent"
-            android:layout_height="250dp">
+            android:layout_height="200dp">
 
             <android.support.design.widget.CollapsingToolbarLayout
                 android:id="@+id/CourseQueryCollapsingToolbar"
@@ -23,22 +23,19 @@
                 android:background="?attr/colorPrimary"
                 android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                 app:titleEnabled="false"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+                app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="center">
-
-                        <com.hzastudio.easyshu.ui.widget.TextFloatingActionButton
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                    android:layout_marginTop="?attr/actionBarSize">
 
                         <android.support.v7.widget.RecyclerView
                             android:id="@+id/CourseQueryOptionsRecyclerView"
-                            android:layout_marginTop="?attr/actionBarSize"
+                            android:alpha="0"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true">
 
                         </android.support.v7.widget.RecyclerView>
 

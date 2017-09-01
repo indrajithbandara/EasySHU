@@ -2,6 +2,7 @@ package com.hzastudio.easyshu.adapter;
 
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,8 @@ import com.hzastudio.easyshu.ui.widget.TextProgressBar;
 
 import java.util.List;
 
-public class CourseQueryRecyclerViewAdapter extends RecyclerView.Adapter<CourseQueryRecyclerViewAdapter.ViewHolder> {
+public class CourseQueryRecyclerViewAdapter
+        extends RecyclerView.Adapter<CourseQueryRecyclerViewAdapter.ViewHolder> {
 
     private List<CourseQueryCourse> mCourseList;
 

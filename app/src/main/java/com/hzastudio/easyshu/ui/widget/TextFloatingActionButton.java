@@ -14,7 +14,7 @@ public class TextFloatingActionButton extends FloatingActionButton {
     private Context mContext;
     private String TextToDraw="";
     private Paint mPaint;
-    private int TextSize=16;
+    private int TextSize=12;
     private int TextColor= Color.BLACK;
     private Rect rect = new Rect();
 
@@ -41,19 +41,34 @@ public class TextFloatingActionButton extends FloatingActionButton {
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
+    protected synchronized void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        this.mPaint.getTextBounds(this.TextToDraw,0, this.TextToDraw.length(), rect);
-        int x = (getWidth() / 2) - rect.centerX();// 让显示的字体处于中心位置;
-        int y = (getHeight() / 2) - rect.centerY();// 让显示的字体处于中心位置;
-        canvas.drawText(this.TextToDraw, x, y, this.mPaint);
+        /*自适应外文姓名换行*/
+        this.mPaint.getTextBounds(TextToDraw, 0, TextToDraw.length(), rect);
+        String[] ToDraw = TextToDraw.split(" ");
+        float startY;
+        if (ToDraw.length % 2 != 0) {
+            startY = (getHeight() / 2) - rect.centerY() - ((rect.bottom - rect.top) + 2) * (ToDraw.length / 2);
+        } else {
+            startY = (getHeight() / 2 + 1) - ((rect.bottom - rect.top) + 2) * (ToDraw.length / 2 - 1);
+        }
+
+        int cnt = 0;
+        for (String DrawElement : ToDraw) {
+            this.mPaint.getTextBounds(DrawElement, 0, DrawElement.length(), rect);
+            float x = (getWidth() / 2) - rect.centerX();
+            float y = startY + cnt * (2 + (rect.bottom - rect.top));
+            canvas.drawText(DrawElement, x, y, this.mPaint);
+            cnt++;
+        }
+
     }
 
     public String getTextToDraw() {
         return TextToDraw;
     }
 
-    public void setTextToDraw(String textToDraw) {
+    public synchronized void setTextToDraw(String textToDraw) {
         TextToDraw = textToDraw;
     }
 
