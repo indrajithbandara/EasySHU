@@ -37,23 +37,27 @@ import com.hzastudio.easyshu.ui.widget.ViewPagerSwipeRefreshLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
+import butterknife.OnClick;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener,
-                                                          View.OnClickListener,
                                                           NavigationView.OnNavigationItemSelectedListener
 {
 
-    private Toolbar CourseTableToolBar;
-    private ViewPagerSwipeRefreshLayout SwipeRefresh;
+    @BindView(R.id.CourseTableToolbar) Toolbar CourseTableToolBar;
+    @BindView(R.id.CourseTableRefresh) ViewPagerSwipeRefreshLayout SwipeRefresh;
     private CourseTablePageAdapter pageAdapter;
-    private ViewPager viewPager;
-    private TabLayout tabs;
-    private DrawerLayout CourseTableDrawerLayout;
-    private FloatingActionButton CourseTableFloatingButton;
+    @BindView(R.id.CourseTableSlider) ViewPager viewPager;
+    @BindView(R.id.CourseTableTab) TabLayout tabs;
+    @BindView(R.id.CourseTableDrawerLayout) DrawerLayout CourseTableDrawerLayout;
+    @BindView(R.id.CourseTableNavigationView) NavigationView navigationView;
+    @BindView(R.id.CourseTableFloatingButton) FloatingActionButton CourseTableFloatingButton;
 
     private boolean NavigationSelectedFlag=false;
     private long BackPressTimer=0;
@@ -65,9 +69,9 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
         /*Toolbar标题栏控件*************************START**********/
-        CourseTableToolBar = (Toolbar) findViewById(R.id.CourseTableToolbar);
         setSupportActionBar(CourseTableToolBar);
         ActionBar CourseTableActionBar=getSupportActionBar();
         if(CourseTableActionBar!=null)
@@ -90,35 +94,21 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         mTitles.add(3,"四");
         mTitles.add(4,"五");
         pageAdapter=new CourseTablePageAdapter(getSupportFragmentManager(),mFragments,mTitles);
-        viewPager=(ViewPager)findViewById(R.id.CourseTableSlider);
         viewPager.setAdapter(pageAdapter);
         /*ViewPager多页切换组件*********************END************/
 
         /*TabLayout标签切换组件*******************START************/
-        tabs = (TabLayout) findViewById(R.id.CourseTableTab);
         tabs.setupWithViewPager(viewPager);
         /*TabLayout标签切换组件*******************END**************/
 
         /*SwipeRefreshLayout下拉刷新组件************START**********/
-        SwipeRefresh =(ViewPagerSwipeRefreshLayout)findViewById(R.id.CourseTableRefresh);
         SwipeRefresh.setOnRefreshListener(this);
         SwipeRefresh.setProgressViewOffset(false,200,250);
         /*SwipeRefreshLayout下拉刷新组件************END************/
 
-        /*DrawerLayout滑动抽屉组件****************START************/
-        CourseTableDrawerLayout=(DrawerLayout)findViewById(R.id.CourseTableDrawerLayout);
-        /*DrawerLayout滑动抽屉组件****************END**************/
-
         /*NavigationView导航栏组件***************START************/
-        NavigationView navigationView=(NavigationView)findViewById(R.id.CourseTableNavigationView);
         navigationView.setNavigationItemSelectedListener(this);
         /*NavigationView导航栏组件***************END**************/
-
-        /*FloatButton悬浮按钮组件*****************START***********/
-        CourseTableFloatingButton = (FloatingActionButton)
-                findViewById(R.id.CourseTableFloatingButton);
-        CourseTableFloatingButton.setOnClickListener(this);
-        /*FloatButton悬浮按钮组件*****************END*************/
 
         /*启动逻辑*******************************START***********/
 
@@ -168,61 +158,6 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         }
         /*获取传入的数据****************************END************/
 
-        if(userCourses.size()!=0) {
-            //定位课表
-            //等待加载完成
-            Thread Wait = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    if (((CourseTableDayFragment) pageAdapter.getItem(0)).getCourseView() == null) {
-                        try {
-                            Thread.sleep(1);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            });
-            Wait.start();
-            try {
-                Wait.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            //获取当前课程的定位以及状态信息
-            CurrentCourse course = CourseProcessor.GetCurrentCoursePos(userCourses);
-            //Log.d("MainActivity","CourseTime:"+course.getCurrentCourseTime());
-            //Log.d("MainActivity","CourseWeekday:"+course.getCurrentCourseWeekday());
-            //Log.d("MainActivity","CourseStatus:"+course.getCurrentCourseStatus());
-            //显示当前课程指示器
-            for (List<TableCourse> tmp1 : tableCourses) {
-                for (TableCourse tmp2 : tmp1) {
-                    if (tmp2 != null) tmp2.setCourseIsCurrent(false);
-                }
-            }
-            if (course.getCurrentCourseStatus() != CourseStatus.STATUS_NULL &&
-                    course.getCurrentCourseStatus() != CourseStatus.STATUS_NOT_COURSE_TIME) {
-                tableCourses.get(course.getCurrentCourseWeekday() - 1)
-                        .get(course.getCurrentCourseTime())
-                        .setCourseIsCurrent(true);
-            }
-
-            //刷新课表
-            for (int i = 0; i < 5; i++) {
-                ((CourseTableDayFragment) pageAdapter.getItem(i)).setCourseList(tableCourses.get(i));
-            }
-
-            if (course.getCurrentCourseStatus() != CourseStatus.STATUS_NULL &&
-                    course.getCurrentCourseStatus() != CourseStatus.STATUS_NOT_COURSE_TIME) {
-                //移动到当前课程的星期
-                tabs.getTabAt(course.getCurrentCourseWeekday() - 1).select();
-                //移动到当前课程的时间
-                CourseTableDayFragment fragment = (CourseTableDayFragment)
-                        pageAdapter.getItem(course.getCurrentCourseWeekday() - 1);
-                fragment.CourseViewScrollTo(course.getCurrentCourseTime());
-            }
-        }
-
         /*启动逻辑*******************************END*************/
 
     }
@@ -232,50 +167,46 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         RefreshCourseTable();
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId())
+    @OnClick(R.id.CourseTableFloatingButton)
+    public void courseFocus()
+    {
+        if(SwipeRefresh.isRefreshing()||userCourses==null||tableCourses==null)return;
+        //获取当前课程的定位以及状态信息
+        CurrentCourse course = CourseProcessor.GetCurrentCoursePos(userCourses);
+        //Log.d("MainActivity","CourseTime:"+course.getCurrentCourseTime());
+        //Log.d("MainActivity","CourseWeekday:"+course.getCurrentCourseWeekday());
+        //Log.d("MainActivity","CourseStatus:"+course.getCurrentCourseStatus());
+        //显示当前课程指示器
+        for(List<TableCourse> tmp1 : tableCourses)
         {
-            case R.id.CourseTableFloatingButton:
-                if(SwipeRefresh.isRefreshing()||userCourses==null||tableCourses==null)break;
-                //获取当前课程的定位以及状态信息
-                CurrentCourse course = CourseProcessor.GetCurrentCoursePos(userCourses);
-                //Log.d("MainActivity","CourseTime:"+course.getCurrentCourseTime());
-                //Log.d("MainActivity","CourseWeekday:"+course.getCurrentCourseWeekday());
-                //Log.d("MainActivity","CourseStatus:"+course.getCurrentCourseStatus());
-                //显示当前课程指示器
-                for(List<TableCourse> tmp1 : tableCourses)
-                {
-                    for (TableCourse tmp2 : tmp1)
-                    {
-                        if(tmp2!=null) tmp2.setCourseIsCurrent(false);
-                    }
-                }
-                if(course.getCurrentCourseStatus()!= CourseStatus.STATUS_NULL &&
-                        course.getCurrentCourseStatus()!= CourseStatus.STATUS_NOT_COURSE_TIME)
-                {
-                    tableCourses.get(course.getCurrentCourseWeekday()-1)
-                            .get(course.getCurrentCourseTime())
-                            .setCourseIsCurrent(true);
-                }
+            for (TableCourse tmp2 : tmp1)
+            {
+                if(tmp2!=null) tmp2.setCourseIsCurrent(false);
+            }
+        }
+        if(course.getCurrentCourseStatus()!= CourseStatus.STATUS_NULL &&
+                course.getCurrentCourseStatus()!= CourseStatus.STATUS_NOT_COURSE_TIME)
+        {
+            tableCourses.get(course.getCurrentCourseWeekday()-1)
+                    .get(course.getCurrentCourseTime())
+                    .setCourseIsCurrent(true);
+        }
 
-                //刷新课表
-                for(int i=0;i<5;i++)
-                {
-                    ((CourseTableDayFragment)pageAdapter.getItem(i)).setCourseList(tableCourses.get(i));
-                }
+        //刷新课表
+        for(int i=0;i<5;i++)
+        {
+            ((CourseTableDayFragment)pageAdapter.getItem(i)).setCourseList(tableCourses.get(i));
+        }
 
-                if(course.getCurrentCourseStatus()!= CourseStatus.STATUS_NULL &&
-                        course.getCurrentCourseStatus()!=CourseStatus.STATUS_NOT_COURSE_TIME)
-                {
-                    //移动到当前课程的星期
-                    tabs.getTabAt(course.getCurrentCourseWeekday()-1).select();
-                    //移动到当前课程的时间
-                    CourseTableDayFragment fragment =(CourseTableDayFragment)
-                            pageAdapter.getItem(course.getCurrentCourseWeekday()-1);
-                    fragment.CourseViewScrollTo(course.getCurrentCourseTime());
-                }
-                break;
+        if(course.getCurrentCourseStatus()!= CourseStatus.STATUS_NULL &&
+                course.getCurrentCourseStatus()!=CourseStatus.STATUS_NOT_COURSE_TIME)
+        {
+            //移动到当前课程的星期
+            tabs.getTabAt(course.getCurrentCourseWeekday()-1).select();
+            //移动到当前课程的时间
+            CourseTableDayFragment fragment =(CourseTableDayFragment)
+                    pageAdapter.getItem(course.getCurrentCourseWeekday()-1);
+            fragment.CourseViewScrollTo(course.getCurrentCourseTime());
         }
     }
 

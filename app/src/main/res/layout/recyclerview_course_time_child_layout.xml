@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_marginTop="6dp"
+    android:layout_marginBottom="6dp"
+    android:layout_marginStart="2dp"
+    android:layout_marginEnd="2dp"
+    app:cardCornerRadius="5dp"
+    app:cardBackgroundColor="#d0d0d0">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/CourseTimeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="4dp"
+                android:ellipsize="none"
+                android:textColor="#000000"
+                android:textAlignment="center"/>
+
+            <ImageView
+                android:id="@+id/CourseTimeDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="@mipmap/cancel"/>
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>

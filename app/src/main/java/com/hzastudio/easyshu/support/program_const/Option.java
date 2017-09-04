@@ -1,26 +1,39 @@
 package com.hzastudio.easyshu.support.program_const;
 
-import android.content.Context;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hzastudio.easyshu.R;
+import com.hzastudio.easyshu.adapter.CourseTimeRecyclerViewAdapter;
 import com.hzastudio.easyshu.support.data_bean.CourseOption;
 import com.hzastudio.easyshu.ui.widget.TextFloatingActionButton;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+
+import cn.carbswang.android.numberpickerview.library.NumberPickerView;
 
 public class Option {
 
     /*TODO:需要重点优化！*/
     /*TODO:用了比较傻的方式一个个选项写实现，以后考虑模块化实现*/
+
+    private static final String[] TimeList = new String[]{"第1节","第2节","第3节","第4节","第5节","第6节","第7节","第8节","第9节","第10节","第11节","第12节","第13节"};
+    private static final String[] DayList = new String[]{"星期一","星期二","星期三","星期四","星期五"};
+    private static final String[] SimpleDayList = new String[]{"一","二","三","四","五"};
 
     private static CourseOption CourseCredit = new CourseOption(
             "学分",
@@ -88,19 +101,21 @@ public class Option {
 
     private static CourseOption IsCourseFull = new CourseOption(
             "尚未选满",
-            "---",
+            "不指定",
             new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     TextFloatingActionButton TFAB = (TextFloatingActionButton) v;
                     String StatusString = TFAB.getTextToDraw();
                     /*循环*/
-                    if(StatusString.equals("---"))
-                        TFAB.setTextToDraw("是");
-                    else if(StatusString.equals("是"))
-                        TFAB.setTextToDraw("否");
-                    else if(StatusString.equals("否"))
-                        TFAB.setTextToDraw("---");
+                    switch (StatusString) {
+                        case "不指定":
+                            TFAB.setTextToDraw("是");
+                            break;
+                        case "是":
+                            TFAB.setTextToDraw("不指定");
+                            break;
+                    }
                 }
             }
     );
@@ -173,7 +188,201 @@ public class Option {
             }
     );
 
-    private static CourseOption[] mOptions = { IsCourseFull,CourseCredit,CourseTeacher,CourseTeacherNum};
+    private static CourseOption CourseCampus = new CourseOption(
+            "校区",
+            "本部",
+            new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    TextFloatingActionButton TFAB = (TextFloatingActionButton) v;
+                    String StatusString = TFAB.getTextToDraw();
+                    /*循环*/
+                    switch (StatusString) {
+                        case "全部":
+                            TFAB.setTextToDraw("本部");
+                            break;
+                        case "本部":
+                            TFAB.setTextToDraw("嘉定");
+                            break;
+                        case "嘉定":
+                            TFAB.setTextToDraw("宝山 东校区");
+                            break;
+                        case "宝山 东校区":
+                            TFAB.setTextToDraw("全部");
+                            break;
+                    }
+                }
+            }
+    );
+
+    private static CourseOption CourseTime = new CourseOption(
+            "上课时间",
+            "---",
+            new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    final TextFloatingActionButton TFAB = (TextFloatingActionButton) v;
+                    View view = LayoutInflater.from(v.getContext())
+                            .inflate(R.layout.option_format_course_time, null);
+                    final AlertDialog dialog = new AlertDialog.Builder(v.getContext())
+                            .create();
+                    dialog.show();
+                    dialog.setContentView(view);
+                    final List<String> CourseTimeList;
+
+                    if (!Objects.equals(TFAB.getTextToDraw(), "---"))
+                        CourseTimeList = Arrays.asList(TFAB.getTextToDraw().split(" "));
+                    else CourseTimeList = new ArrayList<>();
+
+                    final NumberPickerView day = view.findViewById(R.id.OptionCourseTimeDayPicker);
+                    final NumberPickerView from = view.findViewById(R.id.OptionCourseTimeFromPicker);
+                    final NumberPickerView to = view.findViewById(R.id.OptionCourseTimeToPicker);
+                    from.setDisplayedValues(TimeList, true);
+                    to.setDisplayedValues(TimeList, true);
+                    day.setDisplayedValues(DayList, true);
+                    from.setMinValue(0);from.setMaxValue(12);
+                    to.setMinValue(0);to.setMaxValue(12);
+                    day.setMinValue(0);day.setMaxValue(4);
+                    from.setOnValueChangedListener(new NumberPickerView.OnValueChangeListener() {
+                        @Override
+                        public void onValueChange(NumberPickerView picker, int oldVal, int newVal) {
+                            Log.d("sss","From value changed to:"+newVal);
+                            to.smoothScrollToValue(newVal,false);
+                        }
+                    });
+                    TextView hint = view.findViewById(R.id.OptionCourseTimeHint);
+                    hint.setText("已选择的课程时间：");
+                    Button submit = view.findViewById(R.id.OptionCourseTimeSubmit);
+                    submit.setText("确定");
+                    final RecyclerView TimeView = view.findViewById(R.id.OptionCourseTimeDisplayRecyclerView);
+                    final CourseTimeRecyclerViewAdapter adapter = new CourseTimeRecyclerViewAdapter(CourseTimeList);
+                    TimeView.setAdapter(new CourseTimeRecyclerViewAdapter(CourseTimeList));
+                    LinearLayoutManager manager = new LinearLayoutManager(v.getContext());
+                    manager.setOrientation(LinearLayoutManager.HORIZONTAL);
+                    TimeView.setLayoutManager(manager);
+                    TextFloatingActionButton button = view.findViewById(R.id.OptionCourseTimeAddButton);
+                    button.setTextToDraw("添加");
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Log.d("sss", "Day:" + day.getValue() + "\nFrom:" + from.getValue() + "\nTo:" + to.getValue());
+                            String tmp = SimpleDayList[day.getValue()] +
+                                    (from.getValue()+1) + "-" + (to.getValue()+1);
+                            adapter.addItem(tmp);
+                            TimeView.setAdapter(adapter);
+                        }
+                    });
+                    submit.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            List<String> CourseTimeList =((CourseTimeRecyclerViewAdapter)TimeView.getAdapter()).getList();
+                            if(CourseTimeList.size()>0) {
+                                StringBuilder builder = new StringBuilder();
+                                for (int i = 0; i < CourseTimeList.size(); i++) {
+                                    builder.append(CourseTimeList.get(i)).append(" ");
+                                }
+                                TFAB.setTextToDraw(builder.substring(0, builder.length() - 1));
+                                dialog.dismiss();
+                            }
+                            else
+                            {
+                                TFAB.setTextToDraw("---");
+                                Snackbar.make(v,"您未选取任何时间！",Snackbar.LENGTH_SHORT).show();
+                                dialog.dismiss();
+                            }
+                        }
+                    });
+                }
+            }
+    );
+
+    private static CourseOption CourseChooseNum = new CourseOption(
+            "已选人数少于",
+            "---",
+            new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final TextFloatingActionButton TFAB = (TextFloatingActionButton) v;
+                    View view = LayoutInflater.from(v.getContext())
+                            .inflate(R.layout.option_value, null);
+                    final AlertDialog dialog = new AlertDialog.Builder(v.getContext())
+                            .create();
+                    dialog.show();
+                    final EditText input = (EditText) view.findViewById(R.id.InputOptionValue);
+                    TextView hint = (TextView) view.findViewById(R.id.OptionValueHint);
+                    Button submit = (Button) view.findViewById(R.id.OptionValueSubmit);
+                    submit.setText("确定");
+                    hint.setText("请输入已选该课程人数的上限：");
+                    submit.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String result = !input.getText().toString().equals("")
+                                    ? input.getText().toString() : "---";
+                            TFAB.setTextToDraw(result);
+                            dialog.dismiss();
+                        }
+                    });
+                    dialog.setContentView(view);
+                    dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+                    dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+                    input.requestFocus();
+                }
+            }
+    );
+
+    private static CourseOption CourseChooseNumField = new CourseOption(
+            "容量空余",
+            "---",
+            new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    final TextFloatingActionButton TFAB = (TextFloatingActionButton) v;
+                    View view = LayoutInflater.from(v.getContext())
+                            .inflate(R.layout.option_field, null);
+                    final AlertDialog dialog = new AlertDialog.Builder(v.getContext())
+                            .create();
+                    dialog.show();
+                    final EditText inputStart = view.findViewById(R.id.InputOptionFieldStart);
+                    final EditText inputEnd = view.findViewById(R.id.InputOptionFieldEnd);
+                    TextView hint =  view.findViewById(R.id.OptionFieldHint);
+                    Button submit = view.findViewById(R.id.OptionFieldSubmit);
+                    submit.setText("确定");
+                    hint.setText("请输入课程容量空余的范围");
+                    submit.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            String start=inputStart.getText().toString();
+                            String end=inputEnd.getText().toString();
+                            if(!start.equals("") && !end.equals("")) {
+                                if(Integer.parseInt(start)>Integer.parseInt(end))
+                                {
+                                    TFAB.setTextToDraw("---");
+                                    Snackbar.make(v,"上限值不能小于下限值！",Snackbar.LENGTH_SHORT).show();
+                                }
+                                else TFAB.setTextToDraw(start + "-" + end);
+                            } else if(start.equals("") && !end.equals("")) {
+                                TFAB.setTextToDraw("0-"+end);
+                                Snackbar.make(v,"已自动将容量空余下限设为0！",Snackbar.LENGTH_SHORT).show();
+                            }else if(!start.equals("") && end.equals("")) {
+                                TFAB.setTextToDraw(start+"-"+start);
+                                Snackbar.make(v,"已自动将容量空余上限设为下限值！",Snackbar.LENGTH_SHORT).show();
+                            }
+                            else{
+                                TFAB.setTextToDraw("---");
+                            }
+                            dialog.dismiss();
+                        }
+                    });
+                    dialog.setContentView(view);
+                    dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+                    dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+                    inputStart.requestFocus();
+                }
+            }
+    );
+
+    private static CourseOption[] mOptions = { IsCourseFull,CourseCredit,CourseTeacher,
+            CourseTeacherNum,CourseCampus,CourseTime,CourseChooseNum,CourseChooseNumField};
 
     public static List<CourseOption> getCourseOption()
     {

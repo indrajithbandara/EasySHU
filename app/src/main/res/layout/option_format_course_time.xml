@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--格式化课程时间-->
+    <!--可以自由添加课程时间-->
+    <TextView
+        android:id="@+id/OptionCourseTimeHint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"/>
+    
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/OptionCourseTimeDisplayRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/background1"
+        android:overScrollMode="never"
+        android:scrollbars="none"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginBottom="2dp"
+        android:gravity="center">
+
+        <cn.carbswang.android.numberpickerview.library.NumberPickerView
+            android:id="@+id/OptionCourseTimeDayPicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <cn.carbswang.android.numberpickerview.library.NumberPickerView
+            android:id="@+id/OptionCourseTimeFromPicker"
+            android:layout_marginStart="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="至"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:layout_gravity="center_vertical"/>
+
+        <cn.carbswang.android.numberpickerview.library.NumberPickerView
+            android:id="@+id/OptionCourseTimeToPicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <com.hzastudio.easyshu.ui.widget.TextFloatingActionButton
+            android:id="@+id/OptionCourseTimeAddButton"
+            android:layout_marginStart="10dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/OptionCourseTimeSubmit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"/>
+
+
+</LinearLayout>

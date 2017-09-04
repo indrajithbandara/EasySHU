@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import butterknife.ButterKnife;
+
 /**
  * Programmed by Zean Huang
  * Github: https://github.com/thunderbird1997

@@ -30,13 +30,17 @@ import com.hzastudio.easyshu.ui.widget.RecyclerViewDivider;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnItemSelected;
+
 public class CourseQueryActivity extends BaseActivity {
 
-    private Toolbar toolbar;
-    private CollapsingToolbarLayout collapsingToolbarLayout;
-    private AppBarLayout appBarLayout;
-    private MenuItem FilterIcon,FoldIcon;
-    private RecyclerView optionView,listView;
+    @BindView(R.id.CourseQueryToolbar) Toolbar toolbar;
+    @BindView(R.id.CourseQueryAppBarLayout) AppBarLayout appBarLayout;
+    @BindView(R.id.CourseQueryRecyclerView) RecyclerView listView;
+    @BindView(R.id.CourseQueryOptionsRecyclerView) RecyclerView optionView;
+    MenuItem FilterIcon,FoldIcon;
 
     private int CollapsingToolBarVerticalOffset=-10000;
     private int CollapsingToolBarTotalRange=10000;
@@ -47,9 +51,9 @@ public class CourseQueryActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course_query);
+        ButterKnife.bind(this);//必须在当前Activity而不是基类里绑定！
 
         /*Toolbar标题栏控件*************************START**********/
-        toolbar = (Toolbar)findViewById(R.id.CourseQueryToolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -59,7 +63,6 @@ public class CourseQueryActivity extends BaseActivity {
         /*Toolbar标题栏控件*************************END**********/
 
         /*appBarLayout标题栏布局*************************START**********/
-        appBarLayout = (AppBarLayout)findViewById(R.id.CourseQueryAppBarLayout);
         appBarLayout.setExpanded(false);
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override
@@ -87,7 +90,6 @@ public class CourseQueryActivity extends BaseActivity {
         /*appBarLayout标题栏布局*************************END**********/
 
         /*RecyclerView:课程*************************START**********/
-        listView = (RecyclerView)findViewById(R.id.CourseQueryRecyclerView);
         CourseQueryRecyclerViewAdapter adapter = new CourseQueryRecyclerViewAdapter(mCourseList);
         listView.setAdapter(adapter);
         listView.setLayoutManager(new LinearLayoutManager(MainApplication.getContext()));
@@ -95,7 +97,6 @@ public class CourseQueryActivity extends BaseActivity {
         /*RecyclerView:课程*************************END**********/
 
         /*RecyclerView:选项*************************START**********/
-        optionView = (RecyclerView)findViewById(R.id.CourseQueryOptionsRecyclerView);
         CourseQueryOptionsRecyclerViewAdapter optionAdapter =
                 new CourseQueryOptionsRecyclerViewAdapter(Option.getCourseOption());
         optionView.setAdapter(optionAdapter);
@@ -129,26 +130,6 @@ public class CourseQueryActivity extends BaseActivity {
                 finish();
             default:break;
         }
-        return true;
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        super.onTouchEvent(event);
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_UP:
-                    //检查AppBarLayout垂直位置，决定收起还是放下
-                    Log.d("sss", "ACTION_UP!"
-                            + "\nLocation:"
-                            + -CollapsingToolBarVerticalOffset + "/" + CollapsingToolBarTotalRange);
-                    if (CollapsingToolBarVerticalOffset <= -CollapsingToolBarTotalRange / 4) {
-                        appBarLayout.setExpanded(false);//小于3/4,收起
-                    } else {
-                        appBarLayout.setExpanded(true);//大于3/4展开
-                    }
-                default:
-                    break;
-            }
         return true;
     }
 
