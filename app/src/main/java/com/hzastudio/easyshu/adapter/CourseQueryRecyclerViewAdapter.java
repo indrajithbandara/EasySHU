@@ -69,33 +69,17 @@ public class CourseQueryRecyclerViewAdapter
         holder.QueryCourseTeacher.setText(course.getTeacherName());
         holder.QueryCourseRoom.setText(course.getCourseRoom());
         holder.QueryCourseTime.setText(course.getCourseTime());
-        switch (course.getCourseRestriction())
-        {
-            case CourseStatus.RESTRICT_NULL:
-                holder.QueryCourseChooseTxt.setText("正常选课");
-                break;
-            case CourseStatus.RESTRICT_STOP_COURSE_CHOOSE:
-                holder.QueryCourseChooseTxt.setText("禁止选课");
-                break;
-            case CourseStatus.RESTRICT_STUDENT_LIMIT:
-                holder.QueryCourseChooseTxt.setText("限制人数");
-                break;
-            case CourseStatus.RESTRICT_STOP_COURSE_DROP:
-                holder.QueryCourseChooseTxt.setText("禁止退课");
-                break;
-            case CourseStatus.RESTRICT_STOP_CHOOSE_AND_LIMIT:
-                holder.QueryCourseChooseTxt.setText("限制人数 禁止选课");
-                break;
-            case CourseStatus.RESTRICT_STOP_CHOOSE_AND_DROP:
-                holder.QueryCourseChooseTxt.setText("禁止选课 禁止退课");
-                break;
-            case CourseStatus.RESTRICT_STOP_DROP_AND_LIMIT:
-                holder.QueryCourseChooseTxt.setText("限制人数 禁止退课");
-                break;
-            case CourseStatus.RESTRICT_ALL:
-                holder.QueryCourseChooseTxt.setText("限制人数 禁止选课 禁止退课");
-                break;
-        }
+
+        StringBuilder builder = new StringBuilder();
+        int Restriction = course.getCourseRestriction();
+        if ((Restriction & CourseStatus.RESTRICT_STUDENT_LIMIT) == CourseStatus.RESTRICT_STUDENT_LIMIT)
+            builder.append("限制人数");
+        if ((Restriction & CourseStatus.RESTRICT_STOP_COURSE_CHOOSE) == CourseStatus.RESTRICT_STOP_COURSE_CHOOSE)
+            builder.append(" 禁止选课");
+        if ((Restriction & CourseStatus.RESTRICT_STOP_COURSE_DROP) == CourseStatus.RESTRICT_STOP_COURSE_DROP)
+            builder.append(" 禁止退课");
+        holder.QueryCourseChooseTxt.setText(builder.toString());
+
         holder.QueryCourseChooseBar.setTextSize(12);
         holder.QueryCourseChooseBar.setTextColor(Color.BLACK);
         holder.QueryCourseChooseBar.setTextStyle(TextProgressBar.PROGRESS_TEXT_NUM);

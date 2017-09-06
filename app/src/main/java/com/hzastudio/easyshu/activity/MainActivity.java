@@ -24,6 +24,7 @@ import com.hzastudio.easyshu.R;
 import com.hzastudio.easyshu.adapter.CourseTablePageAdapter;
 import com.hzastudio.easyshu.fragment.CourseTableDayFragment;
 import com.hzastudio.easyshu.module.CJSystemHandler;
+import com.hzastudio.easyshu.support.data_bean.CourseOptionData;
 import com.hzastudio.easyshu.support.data_bean.CurrentCourse;
 import com.hzastudio.easyshu.support.data_bean.TableCourse;
 import com.hzastudio.easyshu.support.data_bean.UserCourse;
@@ -32,6 +33,7 @@ import com.hzastudio.easyshu.support.tool.CourseProcessor;
 import com.hzastudio.easyshu.support.universal.ActivityCollector;
 import com.hzastudio.easyshu.support.universal.BaseActivity;
 import com.hzastudio.easyshu.support.universal.MainApplication;
+import com.hzastudio.easyshu.task.XKTasks;
 import com.hzastudio.easyshu.ui.widget.ViewPagerSwipeRefreshLayout;
 
 import java.util.ArrayList;
@@ -159,7 +161,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         /*获取传入的数据****************************END************/
 
         /*启动逻辑*******************************END*************/
-
+        
     }
 
     @Override

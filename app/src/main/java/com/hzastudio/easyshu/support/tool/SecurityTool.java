@@ -105,4 +105,22 @@ public class SecurityTool {
         }
         return sb.toString();
     }
+
+    /**
+     * 自动生成服务器用户校验码
+     * @return String[] 校验数据
+     * @throws NoSuchAlgorithmException 错误
+     */
+    public static String[] getUserSignature() throws NoSuchAlgorithmException
+    {
+        String[] Ret=new String[5];
+        SharedPreferences user = MainApplication.getContext().getSharedPreferences("user", Context.MODE_PRIVATE);
+        Ret[0]=user.getString("username","");
+        Ret[1]=user.getString("password","");
+        Ret[2]=SecurityTool.getRandomString(15);
+        Ret[3]=String.valueOf(System.currentTimeMillis());
+        Ret[4]=SecurityTool.SignatureGenerate(Ret[0],Ret[1],Ret[2],Ret[3]);
+        return Ret;
+    }
+
 }

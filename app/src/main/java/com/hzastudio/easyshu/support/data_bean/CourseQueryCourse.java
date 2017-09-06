@@ -24,7 +24,7 @@ public class CourseQueryCourse {
     private int CourseChosen;
     @SerializedName("course_campus")
     private int CourseCampus;
-    @SerializedName("course_restriction")
+    @SerializedName("course_restrict")
     private int CourseRestriction;
     @SerializedName("course_ques_time")
     private String CourseQuesTime;
@@ -32,6 +32,8 @@ public class CourseQueryCourse {
     private String CourseQuesPlace;
     @SerializedName("course_time_detail")
     private String CourseTimeDetail;
+    @SerializedName("course_comment")
+    private String CourseComment;
 
     public String getCourseNum() {
         return CourseNum;
@@ -145,4 +147,31 @@ public class CourseQueryCourse {
         CourseTimeDetail = courseTimeDetail;
     }
 
+    public String getCourseComment() {
+        return CourseComment;
+    }
+
+    public void setCourseComment(String courseComment) {
+        CourseComment = courseComment;
+    }
+
+    @Override
+    public String toString() {
+        return "CourseQueryCourse:\n"+
+                "CourseName:"+CourseName+"\n"+
+                "CourseNum:"+CourseNum+"\n"+
+                "CourseCredit:"+CourseCredit+"\n"+
+                "TeacherNum:"+TeacherNum+"\n"+
+                "TeacherName:"+TeacherName+"\n"+
+                "CourseTime:"+CourseTime+"\n"+
+                "CourseRoom:"+CourseRoom+"\n"+
+                "CourseCapacity:"+CourseCapacity+"\n"+
+                "CourseChosen:"+CourseChosen+"\n"+
+                "CourseCampus:"+CourseCampus+"\n"+
+                "CourseRestriction:"+CourseRestriction+"\n"+
+                "CourseQuesTime:"+CourseQuesTime+"\n"+
+                "CourseQuesPlace:"+CourseQuesPlace+"\n"+
+                "CourseTimeDetail:"+CourseTimeDetail+"\n"+
+                "CourseComment:"+CourseComment;
+    }
 }

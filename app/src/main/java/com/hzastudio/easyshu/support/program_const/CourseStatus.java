@@ -28,13 +28,7 @@ public class CourseStatus {
     public static final int DISTRICT_BAO_SHAN_DONG=5;
 
     /*选课限制*/
-    public static final int RESTRICT_NULL=0;
-    public static final int RESTRICT_STUDENT_LIMIT=1;
-    public static final int RESTRICT_STOP_COURSE_DROP=2;
-    public static final int RESTRICT_STOP_COURSE_CHOOSE=3;
-    public static final int RESTRICT_STOP_CHOOSE_AND_LIMIT=4;
-    public static final int RESTRICT_STOP_CHOOSE_AND_DROP=5;
-    public static final int RESTRICT_STOP_DROP_AND_LIMIT=6;
-    public static final int RESTRICT_ALL=7;
-
+    public static final int RESTRICT_STUDENT_LIMIT=0x01;
+    public static final int RESTRICT_STOP_COURSE_CHOOSE=0x02;
+    public static final int RESTRICT_STOP_COURSE_DROP=0x04;
 }

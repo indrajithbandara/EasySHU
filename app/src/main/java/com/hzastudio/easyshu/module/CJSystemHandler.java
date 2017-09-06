@@ -31,7 +31,7 @@ public class CJSystemHandler {
                 String season = app.getString("season",null);
                 Log.d("GetCourseTable","Year:"+year);
                 Log.d("GetCourseTable","Season:"+season);
-                List<UserCourse> courseList = CJTasks.Task_CJ_getCourseTable("16121683",year,season);
+                List<UserCourse> courseList = CJTasks.Task_CJ_getCourseTable(year,season);
                 //////////////////保存课表
                 int Count=1;
                 SharedPreferences preferences=MainApplication.getContext()
