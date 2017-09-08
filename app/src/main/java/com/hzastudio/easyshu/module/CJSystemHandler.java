@@ -24,6 +24,7 @@ public class CJSystemHandler {
         return Observable.create(new ObservableOnSubscribe<List<TableCourse>>() {
             @Override
             public void subscribe(@io.reactivex.annotations.NonNull ObservableEmitter<List<TableCourse>> e) throws Exception {
+                Log.d("sss","wtf?");
                 //TODO:获取当前的学年，学期
                 SharedPreferences app = MainApplication.getContext()
                         .getSharedPreferences("application", MODE_PRIVATE);

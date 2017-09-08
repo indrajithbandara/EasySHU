@@ -11,6 +11,28 @@ import android.util.AttributeSet;
 
 public class TextFloatingActionButton extends FloatingActionButton {
 
+    public interface OnTextToDrawChangedListener{
+        String onFormat(String newText);
+    }
+
+    public interface OnFormatListener{
+        void onFormatCompleted(String FormattedText);
+    }
+
+    //提供默认实现
+    OnTextToDrawChangedListener formatter=new OnTextToDrawChangedListener() {
+        @Override
+        public String onFormat(String newText) {
+            return newText;
+        }
+    };
+    OnFormatListener listener=new OnFormatListener() {
+        @Override
+        public void onFormatCompleted(String FormattedText) {
+
+        }
+    };
+
     private Context mContext;
     private String TextToDraw="";
     private Paint mPaint;
@@ -70,6 +92,8 @@ public class TextFloatingActionButton extends FloatingActionButton {
 
     public synchronized void setTextToDraw(String textToDraw) {
         TextToDraw = textToDraw;
+        //格式化并输出数据（两个接口使数据格式化程序可以静态导入）
+        listener.onFormatCompleted(formatter.onFormat(TextToDraw));
     }
 
     public void setTextSize(int textSize) {
@@ -80,6 +104,15 @@ public class TextFloatingActionButton extends FloatingActionButton {
     public void setTextColor(int textColor) {
         TextColor = textColor;
         initTextFAB();
+    }
+
+    public void setOnTextToDrawListener(OnTextToDrawChangedListener formatter)
+    {
+        this.formatter=formatter;
+    }
+
+    public void setOnFormatListener(OnFormatListener listener) {
+        this.listener = listener;
     }
 
 }

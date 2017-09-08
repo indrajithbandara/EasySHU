@@ -16,6 +16,9 @@ public class CourseOptionData {
     private String PageIndex;
     private String PageSize;
 
+    //页数记录（初始化为空）,防止出现错误
+    private String PageCount="";
+
     private CourseOptionData(Builder builder)
     {
         this.CourseNum=builder.CourseNum;
@@ -169,4 +172,32 @@ public class CourseOptionData {
 
     }
 
+    //PageIndex自增
+    public void PageIndexChange()
+    {
+        PageIndex=String.valueOf(Integer.parseInt(PageIndex)+1);
+    }
+
+    public String getPageCount() {
+        return PageCount;
+    }
+
+    public void setPageCount(int pageCount) {
+        PageCount = String.valueOf(pageCount);
+    }
+
+    @Override
+    public String toString() {
+        return "CourseOptionData:\n"+
+                "Page:"+getPageIndex()+"/"+getPageCount()+"\n"+
+                "CourseNum:"+getCourseNum()+"\n"+
+                "CourseName:"+getCourseName()+"\n"+
+                "TeacherNum:"+getTeacherNum()+"\n"+
+                "TeacherName:"+getTeacherName()+"\n"+
+                "CourseCredit:"+getCourseCredit()+"\n"+
+                "CourseNotFull:"+getCourseNotFull()+"\n"+
+                "CourseCampus:"+getCourseCampus()+"\n"+
+                "CourseEnroll:"+getCourseEnroll()+"\n"+
+                "CourseCapacity:"+getCourseMinCapacity()+"-"+getCourseMaxCapacity();
+    }
 }

@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.hzastudio.easyshu.support.data_bean.CourseOptionData;
 import com.hzastudio.easyshu.support.data_bean.CourseQueryCourse;
+import com.hzastudio.easyshu.support.data_bean.CourseQueryReturn;
 import com.hzastudio.easyshu.support.json_lib.json_CompoundReturn;
 import com.hzastudio.easyshu.support.json_lib.json_CompoundReturnWithValue;
 import com.hzastudio.easyshu.support.program_const.URL;
@@ -22,8 +23,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class XKTasks {
-    public static List<CourseQueryCourse> Task_XK_QueryCourse(CourseOptionData data)
-            throws NoSuchAlgorithmException,IOException,NullPointerException
+    public static CourseQueryReturn Task_XK_QueryCourse(CourseOptionData data) throws Exception
     {
         HttpFramework handler= HttpFramework.getInstance();
         String[] user = SecurityTool.getUserSignature();
@@ -52,7 +52,7 @@ public class XKTasks {
 
         Response response = handler.httpPost(URL.SERVER_INTERFACE_URL,body).execute();
         String result=response.body().string();
-        //Log.d("Task_XK_QueryCourse","Result:"+result);
+        Log.d("Task_XK_QueryCourse","Result:"+result);
 
         Gson gson=new Gson();
         Type CourseTableType =
@@ -60,8 +60,9 @@ public class XKTasks {
                         (){}.getType();
         json_CompoundReturnWithValue<List<CourseQueryCourse>,Integer> res=
                 gson.fromJson(result,CourseTableType);
-        Log.d("Task_XK_QueryCourse","Value:"+res.getValue());
-        return res.getData();
+        //Log.d("Task_XK_QueryCourse","Value:"+res.getValue());
+        data.setPageCount(res.getValue());
+        return new CourseQueryReturn(res.getData(),res.getValue());
     }
 
 }

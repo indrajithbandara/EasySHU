@@ -40,7 +40,7 @@ public class CJTasks {
 
         Response response = handler.httpPost(URL.SERVER_INTERFACE_URL,body).execute();
         String result=response.body().string();
-        //Log.d("Task_CJ_getCourseTable","Result:"+result);
+        Log.d("Task_CJ_getCourseTable","Result:"+result);
 
         Gson gson=new Gson();
         Type CourseTableType = new TypeToken<json_CompoundReturn<List<UserCourse>>>(){}.getType();

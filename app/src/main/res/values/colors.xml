@@ -6,4 +6,5 @@
     <color name="FloatingButtonBackColor_Focus">#505050</color>
     <color name="FloatingButtonFrontColor_Focus">#202020</color>
     <color name="white">#ffffff</color>
+    <color name="RecyclerViewDividerColor">#E0E0E0</color>
 </resources>

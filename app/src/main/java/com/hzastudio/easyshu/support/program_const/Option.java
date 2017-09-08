@@ -35,26 +35,34 @@ public class Option {
     private static final String[] DayList = new String[]{"星期一","星期二","星期三","星期四","星期五"};
     private static final String[] SimpleDayList = new String[]{"一","二","三","四","五"};
 
+    public static final int Option_CourseCredit=0;
     private static CourseOption CourseCredit = new CourseOption(
+            0,
             "学分",
             "---",
+            "",
             new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     final TextFloatingActionButton TFAB = (TextFloatingActionButton) v;
                     View view = LayoutInflater.from(v.getContext())
-                            .inflate(R.layout.option_value_with_suggestion,null);
+                            .inflate(R.layout.option_value_with_suggestion, null);
                     final AlertDialog dialog = new AlertDialog.Builder(v.getContext())
                             .create();
                     dialog.show();
                     final EditText input = (EditText) view.findViewById(R.id.InputOptionValueWithSuggestion);
-                    TextView hint  = (TextView)view.findViewById(R.id.OptionValueWithSuggestionHint);
-                    Button sug1 = (Button)view.findViewById(R.id.OptionValueSuggest1);
-                    Button sug2 = (Button)view.findViewById(R.id.OptionValueSuggest2);
-                    Button sug3 = (Button)view.findViewById(R.id.OptionValueSuggest3);
-                    Button sug4 = (Button)view.findViewById(R.id.OptionValueSuggest4);
-                    Button submit = (Button)view.findViewById(R.id.OptionValueWithSuggestionSubmit);
-                    sug1.setText("1");sug2.setText("2");sug3.setText("3");sug4.setText("4");submit.setText("确定");hint.setText("请输入学分");
+                    TextView hint = (TextView) view.findViewById(R.id.OptionValueWithSuggestionHint);
+                    Button sug1 = (Button) view.findViewById(R.id.OptionValueSuggest1);
+                    Button sug2 = (Button) view.findViewById(R.id.OptionValueSuggest2);
+                    Button sug3 = (Button) view.findViewById(R.id.OptionValueSuggest3);
+                    Button sug4 = (Button) view.findViewById(R.id.OptionValueSuggest4);
+                    Button submit = (Button) view.findViewById(R.id.OptionValueWithSuggestionSubmit);
+                    sug1.setText("1");
+                    sug2.setText("2");
+                    sug3.setText("3");
+                    sug4.setText("4");
+                    submit.setText("确定");
+                    hint.setText("请输入学分");
                     sug1.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -99,9 +107,12 @@ public class Option {
             }
     );
 
+    public static final int Option_IsCourseFull=1;
     private static CourseOption IsCourseFull = new CourseOption(
+            1,
             "尚未选满",
             "不指定",
+            "false",
             new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -117,12 +128,22 @@ public class Option {
                             break;
                     }
                 }
+            },
+            new TextFloatingActionButton.OnTextToDrawChangedListener() {
+                @Override
+                public String onFormat(String newText) {
+                    if(newText.equals("是"))return "true";
+                    return "false";
+                }
             }
     );
 
+    public static final int Option_CourseTeacher=2;
     private static CourseOption CourseTeacher = new CourseOption(
+            2,
             "教师名",
             "---",
+            "",
             new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -154,9 +175,12 @@ public class Option {
             }
     );
 
+    public static final int Option_CourseTeacherNum=3;
     private static CourseOption CourseTeacherNum = new CourseOption(
+            3,
             "教师号",
             "---",
+            "",
             new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -188,9 +212,12 @@ public class Option {
             }
     );
 
+    public static final int Option_CourseCampus=4;
     private static CourseOption CourseCampus = new CourseOption(
+            4,
             "校区",
-            "本部",
+            "全部",
+            String.valueOf(CourseStatus.DISTRICT_ALL),
             new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -205,6 +232,9 @@ public class Option {
                             TFAB.setTextToDraw("嘉定");
                             break;
                         case "嘉定":
+                            TFAB.setTextToDraw("徐泾");
+                            break;
+                        case "徐泾":
                             TFAB.setTextToDraw("宝山 东校区");
                             break;
                         case "宝山 东校区":
@@ -212,12 +242,29 @@ public class Option {
                             break;
                     }
                 }
+            },
+            new TextFloatingActionButton.OnTextToDrawChangedListener() {
+                @Override
+                public String onFormat(String newText) {
+                    switch (newText)
+                    {
+                        case "全部":return String.valueOf(CourseStatus.DISTRICT_ALL);
+                        case "本部":return String.valueOf(CourseStatus.DISTRICT_BEN_BU);
+                        case "嘉定":return String.valueOf(CourseStatus.DISTRICT_JIA_DIN);
+                        case "徐泾":return String.valueOf(CourseStatus.DISTRICT_XU_JING);
+                        case "宝山 东校区":return String.valueOf(CourseStatus.DISTRICT_BAO_SHAN_DONG);
+                        default:return String.valueOf(CourseStatus.DISTRICT_ALL);
+                    }
+                }
             }
     );
 
+    public static final int Option_CourseTime=5;
     private static CourseOption CourseTime = new CourseOption(
+            5,
             "上课时间",
             "---",
+            "",
             new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
@@ -296,9 +343,12 @@ public class Option {
             }
     );
 
+    public static final int Option_CourseChooseNum=6;
     private static CourseOption CourseChooseNum = new CourseOption(
+            6,
             "已选人数少于",
             "---",
+            "",
             new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -330,9 +380,12 @@ public class Option {
             }
     );
 
+    public static final int Option_CourseChooseNumField=7;
     private static CourseOption CourseChooseNumField = new CourseOption(
+            7,
             "容量空余",
             "---",
+            "",
             new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
@@ -381,12 +434,13 @@ public class Option {
             }
     );
 
-    private static CourseOption[] mOptions = { IsCourseFull,CourseCredit,CourseTeacher,
+    private static CourseOption[] mOptions = { CourseCredit,IsCourseFull,CourseTeacher,
             CourseTeacherNum,CourseCampus,CourseTime,CourseChooseNum,CourseChooseNumField};
 
     public static List<CourseOption> getCourseOption()
     {
         return Arrays.asList(mOptions);
     }
+
 
 }

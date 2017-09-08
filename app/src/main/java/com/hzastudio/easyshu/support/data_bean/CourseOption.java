@@ -3,6 +3,7 @@ package com.hzastudio.easyshu.support.data_bean;
 import android.view.View;
 
 import com.hzastudio.easyshu.support.program_const.Option;
+import com.hzastudio.easyshu.ui.widget.TextFloatingActionButton;
 
 public class CourseOption {
 
@@ -14,19 +15,45 @@ public class CourseOption {
      * 4.字符串式：教师名，教师号
      */
 
+    //选项的TAG
+    private int Tag=0;
+
     //选项的说明文字
     private String OptionDescribe = "";
 
     //按钮的初始化文字
     private String ButtonInitialText = "";
 
+    //初始化数据
+    private String InitialData = "";
+
     //对应的单击事件响应回调
     private View.OnClickListener onClickListener;
 
-    public CourseOption(String optionDescribe, String buttonInitialText, View.OnClickListener onClickListener) {
+    //对应的内容格式化回调
+    private TextFloatingActionButton.OnTextToDrawChangedListener onTextToDrawChangedListener;
+
+    public CourseOption(int tag, String optionDescribe, String buttonInitialText, String initialData, View.OnClickListener onClickListener, TextFloatingActionButton.OnTextToDrawChangedListener onTextToDrawChangedListener) {
+        Tag = tag;
+        OptionDescribe = optionDescribe;
+        ButtonInitialText = buttonInitialText;
+        InitialData=initialData;
+        this.onClickListener = onClickListener;
+        this.onTextToDrawChangedListener = onTextToDrawChangedListener;
+    }
+
+    public CourseOption(int tag, String optionDescribe, String buttonInitialText, String initialData, View.OnClickListener onClickListener) {
+        Tag = tag;
         OptionDescribe = optionDescribe;
         ButtonInitialText = buttonInitialText;
         this.onClickListener = onClickListener;
+        this.onTextToDrawChangedListener = new TextFloatingActionButton.OnTextToDrawChangedListener() {
+            @Override
+            public String onFormat(String newText) {
+                if(newText.equals("---"))return "";
+                return newText;
+            }
+        };
     }
 
     public String getOptionDescribe() {
@@ -53,4 +80,27 @@ public class CourseOption {
         this.onClickListener = onClickListener;
     }
 
+    public String getInitialData() {
+        return InitialData;
+    }
+
+    public void setInitialData(String initialData) {
+        InitialData = initialData;
+    }
+
+    public int getTag() {
+        return Tag;
+    }
+
+    public void setTag(int tag) {
+        Tag = tag;
+    }
+
+    public TextFloatingActionButton.OnTextToDrawChangedListener getOnTextToDrawChangedListener() {
+        return onTextToDrawChangedListener;
+    }
+
+    public void setOnTextToDrawChangedListener(TextFloatingActionButton.OnTextToDrawChangedListener onTextToDrawChangedListener) {
+        this.onTextToDrawChangedListener = onTextToDrawChangedListener;
+    }
 }

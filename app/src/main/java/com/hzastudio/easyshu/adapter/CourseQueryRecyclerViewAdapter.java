@@ -91,4 +91,23 @@ public class CourseQueryRecyclerViewAdapter
     public int getItemCount() {
         return mCourseList.size();
     }
+
+    public void AddItem(CourseQueryCourse item)
+    {
+        mCourseList.add(item);
+        notifyDataSetChanged();
+    }
+
+    public void AddItems(List<CourseQueryCourse> items)
+    {
+        mCourseList.addAll(items);
+        notifyDataSetChanged();
+    }
+
+    public void RemoveAllItems()
+    {
+        mCourseList.clear();
+        notifyDataSetChanged();
+    }
+
 }
