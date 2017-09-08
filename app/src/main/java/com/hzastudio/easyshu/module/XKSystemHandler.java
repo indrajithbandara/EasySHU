@@ -18,12 +18,23 @@ import io.reactivex.annotations.NonNull;
 
 public class XKSystemHandler {
 
+    public static Observable<Boolean> CheckCourseGrading()
+    {
+        return Observable.create(new ObservableOnSubscribe<Boolean>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<Boolean> e) throws Exception {
+                e.onNext(XKTasks.Task_XK_CheckCourseGrading());
+                e.onComplete();
+            }
+        });
+    }
+
     public static Observable<List<CourseQueryCourse>> QueryCourse(final CourseOptionData data)
     {
         return Observable.create(new ObservableOnSubscribe<List<CourseQueryCourse>>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<List<CourseQueryCourse>> e) throws Exception {
-                Log.d("sss",data.toString());
+                //Log.d("sss",data.toString());
                 if(data.getPageCount().equals("")
                 ||Integer.parseInt(data.getPageCount())>=Integer.parseInt(data.getPageIndex())) {
                     CourseQueryReturn Return = XKTasks.Task_XK_QueryCourse(data);

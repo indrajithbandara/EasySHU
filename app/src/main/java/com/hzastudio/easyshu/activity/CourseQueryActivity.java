@@ -1,10 +1,13 @@
 package com.hzastudio.easyshu.activity;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -14,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hzastudio.easyshu.R;
 import com.hzastudio.easyshu.adapter.CourseQueryOptionsRecyclerViewAdapter;
@@ -36,9 +40,11 @@ import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class CourseQueryActivity extends BaseActivity {
@@ -73,8 +79,45 @@ public class CourseQueryActivity extends BaseActivity {
         setContentView(R.layout.activity_course_query);
         ButterKnife.bind(this);//必须在当前Activity而不是基类里绑定！
 
+        final ProgressDialog dialog = new ProgressDialog(this);
+        dialog.setMessage("检查教学评估是否已完成...");
+        dialog.show();
+        XKSystemHandler.CheckCourseGrading()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap(new Function<Boolean, Observable<Boolean>>() {
+                    @Override
+                    public Observable<Boolean> apply(@NonNull Boolean aBoolean) throws Exception {
+                        if(aBoolean)return Observable.just(true);
+                        else{
+                            dialog.setMessage("正在自动完成教学评估...");
+                            //这里返回自动完成教学评估的Observable,现无测试环境，改用Observable.just(true)
+                            return Observable.just(true);
+                        }
+                    }
+                })
+                .subscribe(new Consumer<Boolean>() {
+                               @Override
+                               public void accept(@NonNull Boolean aBoolean) throws Exception {
+                                   if (aBoolean) dialog.dismiss();
+                                   else {
+                                       dialog.dismiss();
+                                       Toast.makeText(getApplicationContext(), "发生未知错误！", Toast.LENGTH_SHORT).show();
+                                       finish();
+                                   }
+                               }
+                           }, new Consumer<Throwable>() {
+                               @Override
+                               public void accept(@NonNull Throwable throwable) throws Exception {
+                                   dialog.dismiss();
+                                   Toast.makeText(getApplicationContext(), "发生错误！", Toast.LENGTH_SHORT).show();
+                                   finish();
+                               }
+                           });
+
+
         /*Toolbar标题栏控件*************************START**********/
-        setSupportActionBar(toolbar);
+                        setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -166,6 +209,7 @@ public class CourseQueryActivity extends BaseActivity {
                 QueryCourses();
                 break;
             case android.R.id.home:
+                finish();
                 ActivityCollector.RemoveActivity(this);
             default:
                 break;
