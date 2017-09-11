@@ -79,8 +79,11 @@ public class LaunchActivity extends BaseActivity {
                     Log.d("LaunchActivity","SpecDay:"+SpecDay);
                     String[] DayDetail = SpecDay.split("/");
                     java.util.Calendar calendar= java.util.Calendar.getInstance();
+                    Log.d("LaunchActivity","Year:"+Integer.parseInt(DayDetail[0]));
+                    Log.d("LaunchActivity","Month:"+Integer.parseInt(DayDetail[1]));
+                    Log.d("LaunchActivity","Day:"+Integer.parseInt(DayDetail[2]));
                     calendar.set(Integer.parseInt(DayDetail[0]),
-                            Integer.parseInt(DayDetail[1]),
+                            Integer.parseInt(DayDetail[1])-1,
                             Integer.parseInt(DayDetail[2]),
                             23,59,59);
                     long TimeLast = calendar.getTimeInMillis();
