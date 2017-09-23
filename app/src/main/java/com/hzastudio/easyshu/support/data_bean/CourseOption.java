@@ -5,6 +5,11 @@ import android.view.View;
 import com.hzastudio.easyshu.support.program_const.Option;
 import com.hzastudio.easyshu.ui.widget.TextFloatingActionButton;
 
+/**
+ * 课程选项bean
+ * @author Zean Huang
+ * @link https://github.com/thunderbird1997
+ */
 public class CourseOption {
 
     /**

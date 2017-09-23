@@ -24,6 +24,11 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+/**
+ * 与服务器通信函数（用户配置）（阻塞）
+ * @author Zean Huang
+ * @link https://github.com/thunderbird1997
+ */
 public class UserTasks {
 
     public static String Task_CheckUser(String Username)

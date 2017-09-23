@@ -16,6 +16,11 @@ import com.hzastudio.easyshu.ui.widget.TextProgressBar;
 
 import java.util.List;
 
+/**
+ * 课程RecyclerView适配器
+ * @author Zean Huang
+ * @link https://github.com/thunderbird1997
+ */
 public class CourseQueryRecyclerViewAdapter
         extends RecyclerView.Adapter<CourseQueryRecyclerViewAdapter.ViewHolder> {
 

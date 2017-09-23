@@ -17,6 +17,11 @@ import io.reactivex.ObservableOnSubscribe;
 
 import static android.content.Context.MODE_PRIVATE;
 
+/**
+ * 教务系统处理
+ * @author Zean Huang
+ * @link https://github.com/thunderbird1997
+ */
 public class CJSystemHandler {
 
     public static Observable<List<TableCourse>> GetCourseTable() throws NullPointerException

@@ -8,6 +8,11 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.widget.ProgressBar;
 
+/**
+ * 带text的ProgressBar
+ * @author Zean Huang
+ * @link https://github.com/thunderbird1997
+ */
 public class TextProgressBar extends ProgressBar {
 
     public static final int PROGRESS_NO_TEXT=0;

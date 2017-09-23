@@ -26,6 +26,11 @@ import java.util.Objects;
 
 import cn.carbswang.android.numberpickerview.library.NumberPickerView;
 
+/**
+ * 课程查询选项编程
+ * @author Zean Huang
+ * @link https://github.com/thunderbird1997
+ */
 public class Option {
 
     /*TODO:需要重点优化！*/

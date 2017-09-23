@@ -19,6 +19,11 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+/**
+ * 与服务器通信函数（教务系统处理）（阻塞）
+ * @author Zean Huang
+ * @link https://github.com/thunderbird1997
+ */
 public class CJTasks {
 
     public static List<UserCourse> Task_CJ_getCourseTable(String Year,String Season)

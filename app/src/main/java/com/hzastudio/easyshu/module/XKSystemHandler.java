@@ -16,6 +16,11 @@ import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.annotations.NonNull;
 
+/**
+ * 选课系统处理
+ * @author Zean Huang
+ * @link https://github.com/thunderbird1997
+ */
 public class XKSystemHandler {
 
     public static Observable<Boolean> CheckCourseGrading()

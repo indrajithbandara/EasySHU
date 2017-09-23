@@ -15,6 +15,11 @@ import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+/**
+ * 与服务器通信函数（时间获取）（阻塞）
+ * @author Zean Huang
+ * @link https://github.com/thunderbird1997
+ */
 public class TimeTasks {
 
     public static TermTime Task_GetTermTime()

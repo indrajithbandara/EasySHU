@@ -15,6 +15,11 @@ import com.hzastudio.easyshu.support.data_bean.TableCourse;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 课表Fragment
+ * @author Zean Huang
+ * @link https://github.com/thunderbird1997
+ */
 public class CourseTableDayFragment extends Fragment{
 
     private RecyclerView courseView;

@@ -4,7 +4,15 @@ import android.util.Log;
 
 import java.util.Calendar;
 
+/**
+ * 课程时间bean
+ * @author Zean Huang
+ * @link https://github.com/thunderbird1997
+ */
 public class CourseTime {
+
+    public static boolean StartTime=true;
+    public static boolean EndTime=false;
 
     private int StartHour;
     private int StartMinute;
@@ -102,5 +110,21 @@ public class CourseTime {
 
     public void setEndMinute(int endMinute) {
         EndMinute = endMinute;
+    }
+
+    public String toString(boolean StartOrEnd) {
+        String res;
+        if (StartOrEnd)
+        {
+            res=StartHour+":";
+            if(StartMinute<10)res+="0";
+            res+=StartMinute;
+        }else
+        {
+            res=EndHour+":";
+            if(EndMinute<10)res+="0";
+            res+=EndMinute;
+        }
+        return res;
     }
 }

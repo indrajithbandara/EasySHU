@@ -8,10 +8,10 @@ import android.support.v7.app.AppCompatActivity;
 import butterknife.ButterKnife;
 
 /**
- * Programmed by Zean Huang
- * Github: https://github.com/thunderbird1997
+ * Activity基类（配合Activity管理器，增加StartNewActivity函数的多个重载）
+ * @author Zean Huang
+ * @link https://github.com/thunderbird1997
  */
-
 public class BaseActivity extends AppCompatActivity {
 
     public static void StartNewActivity(Context From,Class<?> To)

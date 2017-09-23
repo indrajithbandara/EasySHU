@@ -11,6 +11,11 @@ import android.widget.Toast;
 import com.hzastudio.easyshu.R;
 import com.hzastudio.easyshu.support.universal.MainApplication;
 
+/**
+ * 带删除按钮的输入框
+ * @author Zean Huang
+ * @link https://github.com/thunderbird1997
+ */
 public class DeleteEditText extends android.support.v7.widget.AppCompatEditText {
 
     private Context mContext;

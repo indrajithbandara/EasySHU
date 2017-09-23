@@ -6,6 +6,11 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 
+/**
+ * 里面嵌套ViewPager时使用的SwipeRefreshLayout（解决滑动冲突）
+ * @author Zean Huang
+ * @link https://github.com/thunderbird1997
+ */
 public class ViewPagerSwipeRefreshLayout extends SwipeRefreshLayout {
 
     private float startY;

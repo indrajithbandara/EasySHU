@@ -14,6 +14,11 @@ import com.hzastudio.easyshu.support.data_bean.CourseOption;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 课程时间选项RecyclerView适配器
+ * @author Zean Huang
+ * @link https://github.com/thunderbird1997
+ */
 public class CourseTimeRecyclerViewAdapter
         extends RecyclerView.Adapter<CourseTimeRecyclerViewAdapter.ViewHolder> {
 

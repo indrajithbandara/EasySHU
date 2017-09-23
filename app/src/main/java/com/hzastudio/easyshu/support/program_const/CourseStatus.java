@@ -2,15 +2,19 @@ package com.hzastudio.easyshu.support.program_const;
 
 import com.hzastudio.easyshu.support.data_bean.CourseTime;
 
+/**
+ * 课程状态相关常数
+ * @author Zean Huang
+ * @link https://github.com/thunderbird1997
+ */
 public class CourseStatus {
 
     /*课程状态*/
     public static final int STATUS_BEFORE=0;
     public static final int STATUS_NOW=1;
-    public static final int STATUS_BREAK=2;
-    public static final int STATUS_NOT_COURSE_TIME=3;
-    public static final int STATUS_MORNING_COURSE=4;
-    public static final int STATUS_NULL=5;
+    public static final int STATUS_NOT_COURSE_TIME=2;
+    public static final int STATUS_MORNING_COURSE=3;
+    public static final int STATUS_NULL=4;
 
     /*课程时间*/
     public static final CourseTime[] COURSE_TIME_LIST={new CourseTime(8,0,8,45),

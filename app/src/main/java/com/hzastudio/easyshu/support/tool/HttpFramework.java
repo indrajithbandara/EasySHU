@@ -9,10 +9,10 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 
 /**
+ * OkHttp的简单封装
  * @author Zean Huang
- * Github: https://github.com/thunderbird1997
+ * @link https://github.com/thunderbird1997
  */
-
 public class HttpFramework {
 
     /* *******************单例模式 ***********************/

@@ -47,6 +47,11 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
+/**
+ * 课程查询界面
+ * @author Zean Huang
+ * @link https://github.com/thunderbird1997
+ */
 public class CourseQueryActivity extends BaseActivity {
 
     @BindView(R.id.CourseQueryToolbar)

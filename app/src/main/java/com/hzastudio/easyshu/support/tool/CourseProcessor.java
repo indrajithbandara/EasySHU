@@ -19,6 +19,11 @@ import java.util.Locale;
 
 import static com.hzastudio.easyshu.support.program_const.CourseStatus.COURSE_TIME_LIST;
 
+/**
+ * 课程表处理变换工具
+ * @author Zean Huang
+ * @link https://github.com/thunderbird1997
+ */
 public class CourseProcessor {
 
     /**
@@ -122,19 +127,18 @@ public class CourseProcessor {
         {
             //双休日，不在上课时间
             course.setCurrentCourseStatus(CourseStatus.STATUS_NOT_COURSE_TIME);
-            course.setCurrentCourseTime(-1);
-            course.setCurrentCourseWeekday(-1);
+            //不移动,默认会自动移动到当前查看日的第一节课程
             return course;
         }
         else
         {
+            course.setCurrentCourseTime(CourseTime);
+            course.setCurrentCourseWeekday(day);
             //获取当天课程
             List<TableCourse> CurrentDayCourseList = TableCourseList.get(day-1);
             if(CurrentDayCourseList.get(CourseTime)==null)
             {
                 //没有课程
-                course.setCurrentCourseTime(-1);
-                course.setCurrentCourseWeekday(-1);
                 course.setCurrentCourseStatus(CourseStatus.STATUS_NULL);
                 return course;
             }
@@ -143,20 +147,15 @@ public class CourseProcessor {
                 if(getTableCourseWeek(CurrentDayCourseList.get(CourseTime)).contains(getCurrentWeek()))
                 {
                     //当前周该课程有课
-                    course.setCurrentCourseTime(CourseTime);
-                    course.setCurrentCourseWeekday(day);
                     course.setCurrentCourseStatus(CourseTimeStatus);
                     return course;
                 }
                 else
                 {
                     //没有课程
-                    course.setCurrentCourseTime(-1);
-                    course.setCurrentCourseWeekday(-1);
                     course.setCurrentCourseStatus(CourseStatus.STATUS_NULL);
                     return course;
                 }
-
             }
         }
     }

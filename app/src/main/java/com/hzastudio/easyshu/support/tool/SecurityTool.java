@@ -18,6 +18,11 @@ import java.util.Random;
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 
+/**
+ * 加密工具
+ * @author Zean Huang
+ * @link https://github.com/thunderbird1997
+ */
 public class SecurityTool {
 
     /**

@@ -23,6 +23,11 @@ import okhttp3.Response;
 import static com.hzastudio.easyshu.support.tool.SecurityTool.MD5;
 import static com.hzastudio.easyshu.support.tool.SecurityTool.RSA_EncryptedWithPublicKey;
 
+/**
+ * 用户配置
+ * @author Zean Huang
+ * @link https://github.com/thunderbird1997
+ */
 public class UserConfig {
 
     //TODO:尚未DEBUG，使用时需关注问题

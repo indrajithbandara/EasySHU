@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Programmed by Zean Huang
- * Github: https://github.com/thunderbird1997
+ * Activity管理器
+ * @author Zean Huang
+ * @link https://github.com/thunderbird1997
  */
-
 public class ActivityCollector {
 
     private static List<Activity> MyActivities=new ArrayList<>();

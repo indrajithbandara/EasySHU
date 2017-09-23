@@ -2,6 +2,11 @@ package com.hzastudio.easyshu.support.data_bean;
 
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * 用户课程表（完整信息）bean
+ * @author Zean Huang
+ * @link https://github.com/thunderbird1997
+ */
 public class UserCourse {
 
     @SerializedName("course_num")

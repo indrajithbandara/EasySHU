@@ -1,5 +1,10 @@
 package com.hzastudio.easyshu.support.data_bean;
 
+/**
+ * 课程选项数据bean
+ * @author Zean Huang
+ * @link https://github.com/thunderbird1997
+ */
 public class CourseOptionData {
 
     private String CourseNum;

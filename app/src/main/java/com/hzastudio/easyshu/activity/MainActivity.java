@@ -15,16 +15,14 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.hzastudio.easyshu.R;
 import com.hzastudio.easyshu.adapter.CourseTablePageAdapter;
 import com.hzastudio.easyshu.fragment.CourseTableDayFragment;
 import com.hzastudio.easyshu.module.CJSystemHandler;
-import com.hzastudio.easyshu.support.data_bean.CourseOptionData;
+import com.hzastudio.easyshu.support.data_bean.CourseTime;
 import com.hzastudio.easyshu.support.data_bean.CurrentCourse;
 import com.hzastudio.easyshu.support.data_bean.TableCourse;
 import com.hzastudio.easyshu.support.data_bean.UserCourse;
@@ -33,7 +31,6 @@ import com.hzastudio.easyshu.support.tool.CourseProcessor;
 import com.hzastudio.easyshu.support.universal.ActivityCollector;
 import com.hzastudio.easyshu.support.universal.BaseActivity;
 import com.hzastudio.easyshu.support.universal.MainApplication;
-import com.hzastudio.easyshu.task.XKTasks;
 import com.hzastudio.easyshu.ui.widget.ViewPagerSwipeRefreshLayout;
 
 import java.util.ArrayList;
@@ -41,13 +38,17 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+/**
+ * EasySHU主界面（课程表）
+ * @author Zean Huang
+ * @link https://github.com/thunderbird1997
+ */
 public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener,
                                                           NavigationView.OnNavigationItemSelectedListener
 {
@@ -161,55 +162,11 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         /*获取传入的数据****************************END************/
 
         /*启动逻辑*******************************END*************/
-        
     }
 
     @Override
     public void onRefresh() {
         RefreshCourseTable();
-    }
-
-    @OnClick(R.id.CourseTableFloatingButton)
-    public void courseFocus()
-    {
-        if(SwipeRefresh.isRefreshing()||userCourses==null||tableCourses==null)return;
-        //获取当前课程的定位以及状态信息
-        CurrentCourse course = CourseProcessor.GetCurrentCoursePos(userCourses);
-        //Log.d("MainActivity","CourseTime:"+course.getCurrentCourseTime());
-        //Log.d("MainActivity","CourseWeekday:"+course.getCurrentCourseWeekday());
-        //Log.d("MainActivity","CourseStatus:"+course.getCurrentCourseStatus());
-        //显示当前课程指示器
-        for(List<TableCourse> tmp1 : tableCourses)
-        {
-            for (TableCourse tmp2 : tmp1)
-            {
-                if(tmp2!=null) tmp2.setCourseIsCurrent(false);
-            }
-        }
-        if(course.getCurrentCourseStatus()!= CourseStatus.STATUS_NULL &&
-                course.getCurrentCourseStatus()!= CourseStatus.STATUS_NOT_COURSE_TIME)
-        {
-            tableCourses.get(course.getCurrentCourseWeekday()-1)
-                    .get(course.getCurrentCourseTime())
-                    .setCourseIsCurrent(true);
-        }
-
-        //刷新课表
-        for(int i=0;i<5;i++)
-        {
-            ((CourseTableDayFragment)pageAdapter.getItem(i)).setCourseList(tableCourses.get(i));
-        }
-
-        if(course.getCurrentCourseStatus()!= CourseStatus.STATUS_NULL &&
-                course.getCurrentCourseStatus()!=CourseStatus.STATUS_NOT_COURSE_TIME)
-        {
-            //移动到当前课程的星期
-            tabs.getTabAt(course.getCurrentCourseWeekday()-1).select();
-            //移动到当前课程的时间
-            CourseTableDayFragment fragment =(CourseTableDayFragment)
-                    pageAdapter.getItem(course.getCurrentCourseWeekday()-1);
-            fragment.CourseViewScrollTo(course.getCurrentCourseTime());
-        }
     }
 
     @Override
@@ -275,7 +232,10 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     }
 
     ////////////工具函数/////////////
-    /*刷新课表*/
+
+    /**
+     * 刷新课表
+     */
     private void RefreshCourseTable() {
         CJSystemHandler.GetCourseTable()
                 .subscribeOn(Schedulers.newThread())
@@ -304,5 +264,128 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
             }
         });
     }
+
+    /**
+     * 定位当前课程
+     */
+    @OnClick(R.id.CourseTableFloatingButton)
+    public void courseFocus()
+    {
+        if(SwipeRefresh.isRefreshing()||userCourses==null||tableCourses==null)return;
+
+        //获取当前课程的定位以及状态信息
+        CurrentCourse course = CourseProcessor.GetCurrentCoursePos(userCourses);
+        //Log.d("MainActivity","CourseTime:"+course.getCurrentCourseTime());
+        //Log.d("MainActivity","CourseWeekday:"+course.getCurrentCourseWeekday());
+        //Log.d("MainActivity","CourseStatus:"+course.getCurrentCourseStatus());
+        //删除当前课程指示器
+        for(List<TableCourse> tmp1 : tableCourses)
+        {
+            for (TableCourse tmp2 : tmp1)
+            {
+                if(tmp2!=null) tmp2.setCourseIsCurrent(false);
+            }
+        }
+        //刷新课表
+        for(int i=0;i<5;i++)
+        {
+            ((CourseTableDayFragment)pageAdapter.getItem(i)).setCourseList(tableCourses.get(i));
+        }
+
+        //配置当前课程指示器并移动到当前
+        if(course.getCurrentCourseStatus()!= CourseStatus.STATUS_NOT_COURSE_TIME)
+        {
+            //配置当前课程指示器
+            if(course.getCurrentCourseStatus()!=CourseStatus.STATUS_NULL)
+            {
+                tableCourses.get(course.getCurrentCourseWeekday()-1)
+                        .get(course.getCurrentCourseTime())
+                        .setCourseIsCurrent(true);
+                //刷新课表
+                for(int i=0;i<5;i++)
+                {
+                    ((CourseTableDayFragment)pageAdapter.getItem(i)).setCourseList(tableCourses.get(i));
+                }
+            }
+            //移动到当前课程的星期
+            tabs.getTabAt(course.getCurrentCourseWeekday()-1).select();
+            //移动到当前课程的时间
+            CourseTableDayFragment fragment =(CourseTableDayFragment)
+                    pageAdapter.getItem(course.getCurrentCourseWeekday()-1);
+            fragment.CourseViewScrollTo(course.getCurrentCourseTime());
+        }
+
+        //判断当前课程状态，给出相应提示
+        switch (course.getCurrentCourseStatus())
+        {
+            case CourseStatus.STATUS_NOT_COURSE_TIME:
+                Snackbar.make(CourseTableFloatingButton,"现在不是上课时间",Snackbar.LENGTH_SHORT).show();
+                break;
+            case CourseStatus.STATUS_BEFORE:
+                Snackbar.make(CourseTableFloatingButton,
+                        "下节课是"
+                                + tableCourses.get(course.getCurrentCourseWeekday()-1).
+                                get(course.getCurrentCourseTime())
+                                .getCourseName()
+                                +"\n"
+                                +"在"
+                                +tableCourses.get(course.getCurrentCourseWeekday()-1).
+                                get(course.getCurrentCourseTime())
+                                .getCoursePlace()
+                        ,Snackbar.LENGTH_SHORT).show();
+                break;
+            case CourseStatus.STATUS_NOW:
+                Snackbar.make(CourseTableFloatingButton,
+                        "现在正在上课，"
+                                + CourseStatus.COURSE_TIME_LIST[course.getCurrentCourseTime()]
+                                .toString(CourseTime.EndTime)
+                                +"下课"
+                        ,Snackbar.LENGTH_SHORT).show();
+                break;
+            case CourseStatus.STATUS_MORNING_COURSE:
+                Snackbar.make(CourseTableFloatingButton,
+                        "今天有早课："
+                                +tableCourses.get(course.getCurrentCourseWeekday()-1).
+                                get(course.getCurrentCourseTime())
+                                .getCourseName()
+                                +"\n"
+                                +"在"
+                                +tableCourses.get(course.getCurrentCourseWeekday()-1).
+                                get(course.getCurrentCourseTime())
+                                .getCoursePlace()
+                        ,Snackbar.LENGTH_SHORT).show();
+                break;
+            case CourseStatus.STATUS_NULL:
+                //检查该时间后还有无课程
+                boolean flag = false;
+                List<TableCourse> CurrentDayCourseList = tableCourses.get(course.getCurrentCourseWeekday()-1);
+                for(int i=course.getCurrentCourseTime()+1;i<CurrentDayCourseList.size();i++)
+                {
+                    if(CurrentDayCourseList.get(i)!=null &&
+                            CourseProcessor.getTableCourseWeek(CurrentDayCourseList.get(i))
+                                    .contains(CourseProcessor.getCurrentWeek()))
+                    {
+                        Snackbar.make(CourseTableFloatingButton,
+                                "下节课是"
+                                        +CurrentDayCourseList.get(i)
+                                        .getCourseName()
+                                        +"\n"
+                                        + CourseStatus.COURSE_TIME_LIST[i]
+                                        .toString(CourseTime.StartTime)
+                                        +"在"
+                                        +CurrentDayCourseList.get(i)
+                                        .getCoursePlace()
+                                ,Snackbar.LENGTH_SHORT).show();
+                        flag=true;
+                        break;
+                    }
+                }
+                if (!flag)
+                {
+                    Snackbar.make(CourseTableFloatingButton,"今天的课程已经全部结束了",Snackbar.LENGTH_SHORT).show();
+                }
+        }
+    }
+
     ////////////////////////////////
 }

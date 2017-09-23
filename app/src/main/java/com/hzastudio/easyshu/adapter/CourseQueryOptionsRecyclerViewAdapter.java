@@ -18,6 +18,11 @@ import java.util.List;
 
 import static android.support.v7.widget.RecyclerView.NO_POSITION;
 
+/**
+ * 选项组RecyclerView适配器
+ * @author Zean Huang
+ * @link https://github.com/thunderbird1997
+ */
 public class CourseQueryOptionsRecyclerViewAdapter
         extends RecyclerView.Adapter<CourseQueryOptionsRecyclerViewAdapter.ViewHolder> {
 

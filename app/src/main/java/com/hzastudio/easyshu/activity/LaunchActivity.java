@@ -29,6 +29,11 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
+/**
+ * 启动界面
+ * @author Zean Huang
+ * @link https://github.com/thunderbird1997
+ */
 public class LaunchActivity extends BaseActivity {
 
     SharedPreferences usr,app;

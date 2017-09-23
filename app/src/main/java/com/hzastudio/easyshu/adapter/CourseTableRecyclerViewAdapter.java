@@ -17,8 +17,9 @@ import com.hzastudio.easyshu.support.tool.CourseProcessor;
 import java.util.List;
 
 /**
- * Programmed by Zean Huang
- * Github: https://github.com/thunderbird1997
+ * 课表RecyclerView适配器
+ * @author Zean Huang
+ * @link https://github.com/thunderbird1997
  */
 public class CourseTableRecyclerViewAdapter extends RecyclerView.Adapter<CourseTableRecyclerViewAdapter.ViewHolder>{
 

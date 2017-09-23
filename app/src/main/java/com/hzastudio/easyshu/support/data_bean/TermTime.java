@@ -2,6 +2,11 @@ package com.hzastudio.easyshu.support.data_bean;
 
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * 学期信息bean
+ * @author Zean Huang
+ * @link https://github.com/thunderbird1997
+ */
 public class TermTime {
 
     @SerializedName("year")

@@ -1,13 +1,9 @@
 package com.hzastudio.easyshu.support.data_bean;
 
 /**
- * Programmed by Zean Huang
- * Github: https://github.com/thunderbird1997
- */
-
-
-/**
- * 课表中的课程信息，用于显示
+ * 课表中的课程信息bean，用于显示
+ * @author Zean Huang
+ * @link https://github.com/thunderbird1997
  */
 public class TableCourse{
 

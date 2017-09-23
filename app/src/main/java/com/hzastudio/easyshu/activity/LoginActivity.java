@@ -27,6 +27,11 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
+/**
+ * 登录界面
+ * @author Zean Huang
+ * @link https://github.com/thunderbird1997
+ */
 public class LoginActivity extends BaseActivity implements View.OnClickListener
 {
 

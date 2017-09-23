@@ -6,6 +6,11 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import java.util.List;
 
+/**
+ * 课表ViewPager适配器
+ * @author Zean Huang
+ * @link https://github.com/thunderbird1997
+ */
 public class CourseTablePageAdapter extends FragmentPagerAdapter {
 
     private List<Fragment> mFragments;

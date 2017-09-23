@@ -1,5 +1,10 @@
 package com.hzastudio.easyshu.support.data_bean;
 
+/**
+ * 当前课程信息bean
+ * @author Zean Huang
+ * @link https://github.com/thunderbird1997
+ */
 public class CurrentCourse {
 
     /**

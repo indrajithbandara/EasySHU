@@ -9,6 +9,11 @@ import android.support.annotation.DrawableRes;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+/**
+ * RecyclerView分割线
+ * @author Zean Huang
+ * @link https://github.com/thunderbird1997
+ */
 public class RecyclerViewDivider extends RecyclerView.ItemDecoration {
 
     private Drawable mDivider;

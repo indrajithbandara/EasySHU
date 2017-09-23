@@ -8,7 +8,11 @@ import android.graphics.Rect;
 import android.support.design.widget.FloatingActionButton;
 import android.util.AttributeSet;
 
-
+/**
+ * 带text的FloatingActionButton
+ * @author Zean Huang
+ * @link https://github.com/thunderbird1997
+ */
 public class TextFloatingActionButton extends FloatingActionButton {
 
     public interface OnTextToDrawChangedListener{
